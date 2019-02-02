@@ -28,22 +28,32 @@ public class Pipeline {
      */
     private String commitSha;
     /**
-     * directory  in which the directory  will be cloned
+     * directory  in which the repo  will be cloned
      */
     private String localWorkingDirectory;
+    /**
+     * directory where log files are stored
+     */
+    private String logDirectory;
 
 
     /**
-     * @param repoUrl
-     * @param commitSha
-     * @param localWorkingDirectory
+     *
+     * @param repoUrl URL of the repository to clone
+     * @param commitSha unique id of the commit to build
+     * @param localWorkingDirectory directory  in which the repo  will be cloned
+     * @param logDirectory directory where log files will be stored
      */
-    public Pipeline(String repoUrl, String commitSha, String localWorkingDirectory) {
+    public Pipeline(String repoUrl, String commitSha, String localWorkingDirectory, String logDirectory) {
         this.repoUrl = repoUrl;
         this.commitSha = commitSha;
         this.localWorkingDirectory = localWorkingDirectory;
+        this.logDirectory = logDirectory;
 
     }
+
+
+
 
 
     /**
@@ -66,11 +76,15 @@ public class Pipeline {
                     // use sha of the commit to have unique directories
                     .setDirectory(new File(this.localWorkingDirectory + "/" + this.commitSha))
                     .call();
+
+            // store the git object in class variable
+            this.git = git;
+
+
         } catch (GitAPIException | JGitInternalException e) {
             throw new CloneException(e.getCause());
         }
-        // store the git object in class variable
-        this.git = git;
+
 
     }
 
@@ -94,21 +108,8 @@ public class Pipeline {
      */
     public boolean compileRepo(String compileCommand, int waitForSecond) throws InterruptedException, IOException {
         String[] commandArray = compileCommand.split(" ");
-        ProcessBuilder compileProcessBuilder = null;
-        try {
-            compileProcessBuilder =
-                    new ProcessBuilder().command(commandArray).inheritIO().directory(this.getRepoDirectory());
-
-
-            Process compileProcess = compileProcessBuilder.start();
-            compileProcess.waitFor(waitForSecond, TimeUnit.SECONDS);
-            int returnCode = compileProcess.exitValue();
-            return ((returnCode == 0) ? true : false);
-        } catch (IOException e) {
-            throw e;
-        } catch (InterruptedException e) {
-            throw e;
-        }
+        String compileOutputPath = this.logDirectory+"/compile_"+this.commitSha+".log";
+        return subProcessLauncher(waitForSecond, commandArray, compileOutputPath);
 
     }
 
@@ -118,26 +119,44 @@ public class Pipeline {
      * @param waitForSecond max number of seconds a process can execute
      * @return true if it passes tests, false if not
      */
-    public boolean testRepo(String testCommand, int waitForSecond) throws InterruptedException, IOException {
+    public boolean testRepo(String testCommand, int waitForSecond) throws InterruptedException,
+            IOException {
         String[] commandArray = testCommand.split(" ");
-        ProcessBuilder testProcessBuilder = null;
+        String testOutputPath = this.logDirectory+"/test_"+this.commitSha+".log";
+        return subProcessLauncher(waitForSecond, commandArray,testOutputPath);
+
+    }
+
+
+    /**
+     *
+     * @param waitForSecond
+     * @param commandArray command to execute
+     * @param logPath path of the file in which the output will be redirected
+     * @return
+     * @throws IOException
+     * @throws InterruptedException
+     */
+    private boolean subProcessLauncher(int waitForSecond, String[] commandArray, String logPath) throws IOException,
+            InterruptedException {
+        ProcessBuilder testProcessBuilder;
         try {
             testProcessBuilder =
-                    new ProcessBuilder().command(commandArray).inheritIO().directory(this.getRepoDirectory());
+                    new ProcessBuilder().command(commandArray).redirectErrorStream(true).directory(this.getRepoDirectory());
 
-
+            testProcessBuilder.redirectOutput(new File(logPath));
             Process testProcess = testProcessBuilder.start();
             testProcess.waitFor(waitForSecond, TimeUnit.SECONDS);
             int returnCode = testProcess.exitValue();
             return ((returnCode == 0) ? true : false);
         } catch (IOException e) {
             throw e;
-        } catch (InterruptedException e) {
-            throw e;
         }
-
     }
 
+    /**
+     * Deletes the clone repo and the git object
+     */
     public void clear() {
         try {
             FileUtils.deleteDirectory(this.git.getRepository().getDirectory().getParentFile());
