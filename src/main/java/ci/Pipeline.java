@@ -36,11 +36,12 @@ public class Pipeline {
     }
 
     /**
-     * directory of the cloned repo
+     * directory of the cloned repo. Will be deleted at the end
+     * of the run of the pipeline
      */
     private String clonedRepoDirectory;
     /**
-     * directory where log files are stored,
+     * directory where log files are stored. Will be created only once
      */
     private String logDirectory;
 
@@ -67,7 +68,7 @@ public class Pipeline {
         if (!new File(this.logDirectory).exists()) new File(this.logDirectory).mkdir();
 
         this.clonedRepoDirectory = reposDirectory + "/" + this.repoId + "_" + this.commitSha + "/";
-        if (!new File(this.clonedRepoDirectory).exists()) new File(this.clonedRepoDirectory).mkdirs();
+        new File(this.clonedRepoDirectory).mkdir();
 
 
     }
