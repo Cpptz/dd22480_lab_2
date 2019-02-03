@@ -39,7 +39,6 @@ class PipelineTest {
 //            e.printStackTrace();
             Assertions.fail();
         }
-
     }
 
     @Test
@@ -57,7 +56,7 @@ class PipelineTest {
 
 
 
-        // test that it doesn't throw any exceptions
+        // TEST that it doesn't throw any exceptions
         Pipeline pipeline1 = new Pipeline(goodUrl, "9ed9801", reposDirectory, logsDirectory);
 
         try {
@@ -121,21 +120,21 @@ class PipelineTest {
         try {
             pipeline.cloneRepository();
             pipeline.checkoutRepo();
-            assertTrue(pipeline.compileRepo("mvn compile -q", 10));
+            assertTrue(pipeline.compileRepo("mvn compile -B", 10));
 
             // we should never pass here
-        } catch (CloneException | CheckoutException | InterruptedException | IOException e) {
+        } catch (CloneException | CheckoutException | CompileException e) {
 //            e.printStackTrace();
             Assertions.fail();
         }
 
         // valid url, valid sha + invalid code => should not compile : return false (no exceptions should be thrown)
-        File pom = new File(pipeline.getRepoDirectory() + "/pom.xml");
+        File pom = new File(pipeline.getClonedRepoDirectory() + "pom.xml");
         pom.delete();
 
         try {
-            assertFalse(pipeline.compileRepo("mvn compile -q", 10));
-        } catch (InterruptedException | IOException e) {
+            assertFalse(pipeline.compileRepo("mvn compile -B", 10));
+        } catch (CompileException e) {
             e.printStackTrace();
             Assertions.fail();
         }
@@ -153,25 +152,53 @@ class PipelineTest {
         try {
             pipeline.cloneRepository();
             pipeline.checkoutRepo();
-            assertTrue(pipeline.testRepo("mvn test -q", 10));
+            assertTrue(pipeline.testRepo("mvn test -B", 10));
 
             // we should never pass here
-        } catch (CloneException | CheckoutException | InterruptedException | IOException e) {
+        } catch (CloneException | CheckoutException | TestException e) {
             Assertions.fail();
         }
 
 
         // valid url, valid sha + invalid code => should not pass tests : return false (no exceptions should be thrown)
-        File pom = new File(pipeline.getRepoDirectory() + "/pom.xml");
+        File pom = new File(pipeline.getClonedRepoDirectory() + "pom.xml");
         pom.delete();
         try {
-            assertFalse(pipeline.testRepo("mvn test -q", 10));
-        } catch (InterruptedException | IOException e) {
+            assertFalse(pipeline.testRepo("mvn test -B", 10));
+        } catch (TestException e) {
             Assertions.fail();
         }
 
         // delete repo
         pipeline.clear();
 
+    }
+
+
+    @Test
+    void runPipeline(){
+        // valid url, valid commitSha, valid code
+        Pipeline pipeline = new Pipeline(goodUrl, "9ed9801", reposDirectory, logsDirectory);
+
+        PipelineResult result = pipeline.runPipeline();
+
+
+        assertEquals(PipelineResult.PipelineStatus.SUCCESS,result.status);
+        assertTrue(result.compileLog);
+        assertTrue(result.testLog);
+
+        pipeline.clear();
+
+        // valid url, not valid commitSha, valid code
+        Pipeline pipeline_1 = new Pipeline(goodUrl, "881114", reposDirectory, logsDirectory);
+
+        PipelineResult result_1 = pipeline_1.runPipeline();
+
+        assertEquals(PipelineResult.PipelineStatus.FAILURE,result_1.status);
+        assertEquals(PipelineResult.FailureCause.CHECKOUT,result_1.failureCause);
+        assertFalse(result_1.compileLog);
+        assertFalse(result_1.testLog);
+
+        pipeline_1.clear();
     }
 }

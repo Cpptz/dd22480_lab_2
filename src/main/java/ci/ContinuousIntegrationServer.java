@@ -4,6 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletException;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -57,15 +58,19 @@ public class ContinuousIntegrationServer extends AbstractHandler
     public static void main(String[] args) throws Exception
     {
 
-        Properties props = new Properties();
-        props.load(new FileInputStream(args[0]));
-        String reposDirectory = props.getProperty("reposDirectory");
-        String logsDirectory= props.getProperty("logsDirectory");
-        int port = Integer.parseInt(props.getProperty("port"));
+//        Properties props = new Properties();
+//        props.load(new FileInputStream(args[0]));
+//        String reposDirectory = props.getProperty("reposDirectory");
+//        String logsDirectory= props.getProperty("logsDirectory");
+//        int port = Integer.parseInt(props.getProperty("port"));
+//
+//        Server server = new Server(port);
+//        server.setHandler(new ContinuousIntegrationServer(reposDirectory,logsDirectory));
+//        server.start();
+//        server.join();
 
-        Server server = new Server(port);
-        server.setHandler(new ContinuousIntegrationServer(reposDirectory,logsDirectory));
-        server.start();
-        server.join();
+
+
+
     }
 }
