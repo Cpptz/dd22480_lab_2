@@ -31,17 +31,19 @@ public class ContinuousIntegrationServer extends AbstractHandler
         // for example
         // 1st clone your repository
         // 2nd compile the code
-        //System.out.println(getRequestBody(request));
-        JsonParser parser = new JsonParser();
-        JsonObject rootObj = parser.parse(getRequestBody(request)).getAsJsonObject();
-        JsonObject locObj = rootObj.getAsJsonObject("check_run")
-                .getAsJsonObject("output");
-
-        String status = rootObj.get("title").getAsString();
-
-        System.out.printf("Title: %s\n", status);
+        System.out.println(parse(getRequestBody(request)));
 
         response.getWriter().println("CI job done");
+    }
+
+    public String parse(String jsonLine) {
+        JsonElement jelement = new JsonParser().parse(jsonLine);
+        JsonObject  jobject = jelement.getAsJsonObject();
+        jobject = jobject.getAsJsonObject("check_run");
+        JsonArray jarray = jobject.getAsJsonArray("output");
+        jobject = jarray.get(0).getAsJsonObject();
+        String result = jobject.get("title").getAsString();
+        return result;
     }
 
     private String getRequestBody(final HttpServletRequest request) {
