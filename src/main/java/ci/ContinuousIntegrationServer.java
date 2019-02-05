@@ -4,7 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletException;
 
-import java.io.IOException;
+import java.io.*;
 
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.Request;
@@ -33,7 +33,25 @@ public class ContinuousIntegrationServer extends AbstractHandler
         // 1st clone your repository
         // 2nd compile the code
 
+
         response.getWriter().println("CI job done");
+    }
+
+    private String getParamsFromPost(HttpServletRequest request) throws IOException {
+        BufferedReader reader = request.getReader();
+        StringBuilder sb = new StringBuilder();
+        String line = reader.readLine();
+        while (line != null) {
+            sb.append(line + "\n");
+            line = reader.readLine();
+        }
+        reader.close();
+        String params = sb.toString();
+        String[] _params = params.split("&");
+        for (String param : _params) {
+            System.out.println("params(POST)-->" + param);
+        }
+        return params;
     }
 
     // used to start the CI server in command line
