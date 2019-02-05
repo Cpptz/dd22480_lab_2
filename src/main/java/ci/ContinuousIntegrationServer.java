@@ -3,8 +3,12 @@ package ci;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletException;
-
+ 
 import java.io.IOException;
+import java.nio.file.Paths;
+import java.util.Properties;
+import java.util.ResourceBundle;
+
 import java.util.Base64;
 
 import com.google.gson.JsonObject;
@@ -30,9 +34,17 @@ import org.apache.http.impl.client.HttpClientBuilder;
 /**
  Skeleton of a ContinuousIntegrationServer which acts as webhook
  See the Jetty documentation for API documentation of those classes.
- */
+*/
 public class ContinuousIntegrationServer extends AbstractHandler
 {
+    private String reposDirectory;
+    private String logsDirectory;
+
+    public ContinuousIntegrationServer(String reposDirectory, String logsDirectory){
+        this.reposDirectory = reposDirectory;
+        this.logsDirectory = logsDirectory;
+    }
+
     public void handle(String target,
                        Request baseRequest,
                        HttpServletRequest request,
@@ -42,9 +54,6 @@ public class ContinuousIntegrationServer extends AbstractHandler
         response.setContentType("text/html;charset=utf-8");
         response.setStatus(HttpServletResponse.SC_OK);
         baseRequest.setHandled(true);
-
-//        request.getParameter("")
-
 
 
         System.out.println(target);
@@ -57,7 +66,7 @@ public class ContinuousIntegrationServer extends AbstractHandler
         response.getWriter().println("CI job done");
     }
 
-    
+
     public static boolean sendStatus(String pipelineStatus, String description, String repoUrl, String commitSha){
 
 
@@ -112,16 +121,24 @@ public class ContinuousIntegrationServer extends AbstractHandler
         }
     }
 
+
     // used to start the CI server in command line
     public static void main(String[] args) throws Exception
     {
-//        Server server = new Server(8080);
-//        server.setHandler(new ContinuousIntegrationServer());
+
+//        Properties props = new Properties();
+//        props.load(new FileInputStream(args[0]));
+//        String reposDirectory = props.getProperty("reposDirectory");
+//        String logsDirectory= props.getProperty("logsDirectory");
+//        int port = Integer.parseInt(props.getProperty("port"));
+//
+//        Server server = new Server(port);
+//        server.setHandler(new ContinuousIntegrationServer(reposDirectory,logsDirectory));
 //        server.start();
 //        server.join();
 
 
-        String url =  "https://github.com/Cpptz/dd22480_lab_1";
-        System.out.println(url.substring(url.indexOf(".com") + 5));
+
+
     }
 }
