@@ -31,15 +31,15 @@ public class ContinuousIntegrationServer extends AbstractHandler
         // for example
         // 1st clone your repository
         // 2nd compile the code
-        System.out.println(request);
-        JsonParser parser = new JsonParser();
-        JsonObject rootObj = parser.parse(request.getReader()).getAsJsonObject();
-        JsonObject locObj = rootObj.getAsJsonObject("check_run")
-                .getAsJsonObject("output");
+        System.out.println(request.getReader());
+        //JsonParser parser = new JsonParser();
+        //JsonObject rootObj = parser.parse(request.getReader()).getAsJsonObject();
+        //JsonObject locObj = rootObj.getAsJsonObject("check_run")
+          //      .getAsJsonObject("output");
 
-        String status = rootObj.get("title").getAsString();
+        //String status = rootObj.get("title").getAsString();
 
-        System.out.printf("Title: %s\n", status);
+        //System.out.printf("Title: %s\n", status);
         //System.out.println(new Gson().fromJson(getParamsFromPost(request),JsonObject.class).getAsJsonObject().get("check_run").getAsJsonObject().get("output").getAsJsonArray().get(0).getAsJsonObject().get("title").getAsString());
         //push
 
