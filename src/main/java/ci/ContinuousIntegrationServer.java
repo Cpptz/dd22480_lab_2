@@ -34,7 +34,8 @@ public class ContinuousIntegrationServer extends AbstractHandler
         // 1st clone your repository
         // 2nd compile the code
 
-        System.out.println(new Gson().fromJson(getParamsFromPost(request),JsonObject.class).getAsJsonObject().get("check_run").getAsJsonObject().get("output").getAsJsonArray().get(0).getAsJsonObject().get("title").getAsString());
+        Gson gson = new Gson();
+        //System.out.println(new Gson().fromJson(getParamsFromPost(request),JsonObject.class).getAsJsonObject().get("check_run").getAsJsonObject().get("output").getAsJsonArray().get(0).getAsJsonObject().get("title").getAsString());
 
 
         response.getWriter().println("CI job done");
