@@ -29,7 +29,7 @@ public class ContinuousIntegrationServer extends AbstractHandler
         request.getParameter("");
 
         System.out.println(target);
-        System.out.println(getParamsFromPost(request));
+        //System.out.println(getParamsFromPost(request));
         // here you do all the continuous integration tasks
         // for example
         // 1st clone your repository
@@ -38,22 +38,7 @@ public class ContinuousIntegrationServer extends AbstractHandler
         response.getWriter().println("CI job done");
     }
 
-    private String getParamsFromPost(HttpServletRequest request) throws IOException {
-        BufferedReader reader = request.getReader();
-        StringBuilder sb = new StringBuilder();
-        String line = reader.readLine();
-        while (line != null) {
-            sb.append(line + "\n");
-            line = reader.readLine();
-        }
-        reader.close();
-        String params = sb.toString();
-        String[] _params = params.split("&");
-        for (String param : _params) {
-            System.out.println("params(POST)-->" + param);
-        }
-        return params;
-    }
+
  
     // used to start the CI server in command line
     public static void main(String[] args) throws Exception
