@@ -29,7 +29,7 @@ All LIC functions are described in [decide.pdf](decide.pdf) in section 2.1. For 
 
 ### Test
 We have written unit tests for methods of:
-* [ContinousIntegrationServer.java] (src/main/java/main/ContinousIntegrationServer.java) in [ContinousIntegrationServerTest.java]  (src/test/java/main/ContinousIntegrationServerTest.java )
+* [ContinousIntegrationServer.java](src/main/java/main/ContinousIntegrationServer.java) in [ContinousIntegrationServerTest.java](src/test/java/main/ContinousIntegrationServerTest.java )
 
 and also end to end tests for the INSERT FUNCTION/CLASS of [ContinousIntegrationServer.java](src/main/java/main/ContinousIntegrationServer.java) 
 in [ContinousIntegrationServer.java](src/test/java/main/ContinousIntegrationServer.java) 
