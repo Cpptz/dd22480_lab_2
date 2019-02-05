@@ -49,7 +49,7 @@ public class ContinuousIntegrationServer extends AbstractHandler
         String params = sb.toString();
         String[] _params = params.split("&");
         for (String param : _params) {
-            System.out.println("params(POST)-->" + param);
+            System.out.println("params(POST)->" + param);
         }
         return params;
     }
