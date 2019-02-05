@@ -33,7 +33,7 @@ public class ContinuousIntegrationServer extends AbstractHandler
         // 2nd compile the code
 
         JsonParser parser = new JsonParser();
-        JsonObject rootObj = parser.parse(getParamsFromPost(request)).getAsJsonObject();
+        JsonObject rootObj = parser.parse(request).getAsJsonObject();
         JsonObject locObj = rootObj.getAsJsonObject("check_run")
                 .getAsJsonObject("output");
 
