@@ -10,6 +10,7 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 
+import com.google.gson.Gson;
 /**
  Skeleton of a ContinuousIntegrationServer which acts as webhook
  See the Jetty documentation for API documentation of those classes.
@@ -32,7 +33,8 @@ public class ContinuousIntegrationServer extends AbstractHandler
         // for example
         // 1st clone your repository
         // 2nd compile the code
-
+        test = getParamsFromPost(request);
+        System.out.println(parse(test));
 
         response.getWriter().println("CI job done");
     }
@@ -52,6 +54,16 @@ public class ContinuousIntegrationServer extends AbstractHandler
             System.out.println("params(POST)->" + param);
         }
         return params;
+    }
+
+    public String parse(String jsonLine) {
+        JsonElement jelement = new JsonParser().parse(jsonLine);
+        JsonObject  jobject = jelement.getAsJsonObject();
+        jobject = jobject.getAsJsonObject("checkrun");
+        JsonArray jarray = jobject.getAsJsonArray("output");
+        jobject = jarray.get(0).getAsJsonObject();
+        String result = jobject.get("title").getAsString();
+        return result;
     }
 
     // used to start the CI server in command line
