@@ -31,19 +31,27 @@ public class ContinuousIntegrationServer extends AbstractHandler
         // for example
         // 1st clone your repository
         // 2nd compile the code
-        System.out.println(request.getReader());
-        //JsonParser parser = new JsonParser();
-        //JsonObject rootObj = parser.parse(request.getReader()).getAsJsonObject();
-        //JsonObject locObj = rootObj.getAsJsonObject("check_run")
-          //      .getAsJsonObject("output");
-
-        //String status = rootObj.get("title").getAsString();
-
-        //System.out.printf("Title: %s\n", status);
-        //System.out.println(new Gson().fromJson(getParamsFromPost(request),JsonObject.class).getAsJsonObject().get("check_run").getAsJsonObject().get("output").getAsJsonArray().get(0).getAsJsonObject().get("title").getAsString());
-        //push
+        System.out.println(getRequestBody(request));
 
         response.getWriter().println("CI job done");
+    }
+
+    private String getRequestBody(final HttpServletRequest request) {
+        final StringBuilder builder = new StringBuilder();
+        try (BufferedReader reader = request.getReader()) {
+            if (reader == null) {
+                logger.debug("Request body could not be read because it's empty.");
+                return null;
+            }
+            String line;
+            while ((line = reader.readLine()) != null) {
+                builder.append(line);
+            }
+            return builder.toString();
+        } catch (final Exception e) {
+            logger.trace("Could not obtain the saml request body from the http request", e);
+            return null;
+        }
     }
 
     // used to start the CI server in command line
