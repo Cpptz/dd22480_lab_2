@@ -3,9 +3,19 @@ package ci;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletException;
- 
+
 import java.io.IOException;
- 
+import java.util.Base64;
+
+import com.google.gson.JsonObject;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.Credentials;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.CredentialsProvider;
+import org.apache.http.client.config.CookieSpecs;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
@@ -16,17 +26,18 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 
-/** 
+
+/**
  Skeleton of a ContinuousIntegrationServer which acts as webhook
  See the Jetty documentation for API documentation of those classes.
-*/
+ */
 public class ContinuousIntegrationServer extends AbstractHandler
 {
     public void handle(String target,
                        Request baseRequest,
                        HttpServletRequest request,
-                       HttpServletResponse response) 
-        throws IOException, ServletException
+                       HttpServletResponse response)
+            throws IOException, ServletException
     {
         response.setContentType("text/html;charset=utf-8");
         response.setStatus(HttpServletResponse.SC_OK);
@@ -46,36 +57,71 @@ public class ContinuousIntegrationServer extends AbstractHandler
         response.getWriter().println("CI job done");
     }
 
+    
+    public static boolean sendStatus(String pipelineStatus, String description, String repoUrl, String commitSha){
 
-    public void sendStatus(int pipelineStatus){
-        HttpClient httpClient = HttpClientBuilder.create().build(); //Use this instead
+
+
+
+        String ownerAndRepo= repoUrl.substring(repoUrl.indexOf(".com") + 5);
+
+        String username = "cpptz";
+        String token = "50bea8897a6167ab9f05ad2a2cbc4431ed53b060";
+
+
+        HttpClient httpClient = HttpClientBuilder.create()
+                .setDefaultRequestConfig(RequestConfig.custom()
+                        .setCookieSpec(CookieSpecs.STANDARD).build())
+                .build();
+
+        String encoding = Base64.getEncoder().encodeToString((username+":"+token).getBytes());
+
+
+
 
         try {
 
-            HttpPost request = new HttpPost("http://yoururl");
-            StringEntity params =new StringEntity("details={\"name\":\"myname\",\"age\":\"20\"} ");
-            request.addHeader("content-type", "application/x-www-form-urlencoded");
-            request.setEntity(params);
-            HttpResponse response = httpClient.execute(request);
+            // end point of github api to post the status
+            String postUrl =
+                    "https://api.github.com/repos/"+ownerAndRepo+ "/statuses" + "/"+commitSha;
+            HttpPost request = new HttpPost(postUrl);
+            request.setHeader("Authorization","Basic "+encoding);
 
-            //handle response here...
+            // create the payload
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty("state", pipelineStatus);
+            jsonObject.addProperty("description", pipelineStatus);
+            jsonObject.addProperty("context", "ci/dd2480");
+            jsonObject.addProperty("target-url", "");
+            StringEntity params =new StringEntity(jsonObject.toString());
+            request.setEntity(params);
+            request.addHeader("Content-type", "application/json");
+            request.addHeader("Accept", "application/json");
+            HttpResponse response = httpClient.execute(request);
+//            ((CloseableHttpClient) httpClient).close();
+
+
+            return response.getStatusLine().getStatusCode()==201;
 
         }catch (Exception ex) {
 
+            ex.printStackTrace();
             //handle exception here
+            return false;
 
-        } finally {
-            //Deprecated
-            //httpClient.getConnectionManager().shutdown();
         }
     }
- 
+
     // used to start the CI server in command line
     public static void main(String[] args) throws Exception
     {
-        Server server = new Server(8080);
-        server.setHandler(new ContinuousIntegrationServer()); 
-        server.start();
-        server.join();
+//        Server server = new Server(8080);
+//        server.setHandler(new ContinuousIntegrationServer());
+//        server.start();
+//        server.join();
+
+
+        String url =  "https://github.com/Cpptz/dd22480_lab_1";
+        System.out.println(url.substring(url.indexOf(".com") + 5));
     }
 }
