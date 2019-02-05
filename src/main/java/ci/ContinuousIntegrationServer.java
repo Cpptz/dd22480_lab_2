@@ -4,7 +4,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletException;
 
+
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.Base64;
 
 import com.google.gson.JsonObject;
@@ -16,6 +20,10 @@ import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
+import java.nio.file.Paths;
+import java.util.Properties;
+import java.util.ResourceBundle;
+
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
@@ -28,22 +36,29 @@ import org.apache.http.impl.client.HttpClientBuilder;
 
 
 /**
+/**
  Skeleton of a ContinuousIntegrationServer which acts as webhook
  See the Jetty documentation for API documentation of those classes.
- */
+*/
 public class ContinuousIntegrationServer extends AbstractHandler
 {
+    private String reposDirectory;
+    private String logsDirectory;
+
+    public ContinuousIntegrationServer(String reposDirectory, String logsDirectory){
+        this.reposDirectory = reposDirectory;
+        this.logsDirectory = logsDirectory;
+    }
+
     public void handle(String target,
                        Request baseRequest,
                        HttpServletRequest request,
-                       HttpServletResponse response)
-            throws IOException, ServletException
+                       HttpServletResponse response) 
+        throws IOException, ServletException
     {
         response.setContentType("text/html;charset=utf-8");
         response.setStatus(HttpServletResponse.SC_OK);
         baseRequest.setHandled(true);
-
-//        request.getParameter("")
 
 
 
@@ -57,7 +72,7 @@ public class ContinuousIntegrationServer extends AbstractHandler
         response.getWriter().println("CI job done");
     }
 
-    
+
     public static boolean sendStatus(String pipelineStatus, String description, String repoUrl, String commitSha){
 
 
@@ -66,7 +81,15 @@ public class ContinuousIntegrationServer extends AbstractHandler
         String ownerAndRepo= repoUrl.substring(repoUrl.indexOf(".com") + 5);
 
         String username = "cpptz";
-        String token = "50bea8897a6167ab9f05ad2a2cbc4431ed53b060";
+        String token = "YmRiMmU0NjQxZGRjNmE0ZTI2OTU0OTAzZjEwYTQ5MzE1YzZmOTdiZg==";
+
+        byte[] asBytes = Base64.getDecoder().decode(token);
+        try {
+            token = new String(asBytes, "utf-8");
+        } catch (UnsupportedEncodingException e) {
+            return false;
+        }
+
 
 
         HttpClient httpClient = HttpClientBuilder.create()
@@ -100,7 +123,6 @@ public class ContinuousIntegrationServer extends AbstractHandler
             HttpResponse response = httpClient.execute(request);
 //            ((CloseableHttpClient) httpClient).close();
 
-
             return response.getStatusLine().getStatusCode()==201;
 
         }catch (Exception ex) {
@@ -115,13 +137,20 @@ public class ContinuousIntegrationServer extends AbstractHandler
     // used to start the CI server in command line
     public static void main(String[] args) throws Exception
     {
-//        Server server = new Server(8080);
-//        server.setHandler(new ContinuousIntegrationServer());
+
+//        Properties props = new Properties();
+//        props.load(new FileInputStream(args[0]));
+//        String reposDirectory = props.getProperty("reposDirectory");
+//        String logsDirectory= props.getProperty("logsDirectory");
+//        int port = Integer.parseInt(props.getProperty("port"));
+//
+//        Server server = new Server(port);
+//        server.setHandler(new ContinuousIntegrationServer(reposDirectory,logsDirectory));
 //        server.start();
 //        server.join();
 
 
-        String url =  "https://github.com/Cpptz/dd22480_lab_1";
-        System.out.println(url.substring(url.indexOf(".com") + 5));
+
+
     }
 }
