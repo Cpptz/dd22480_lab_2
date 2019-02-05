@@ -40,7 +40,6 @@ public class ContinuousIntegrationServer extends AbstractHandler
         final StringBuilder builder = new StringBuilder();
         try (BufferedReader reader = request.getReader()) {
             if (reader == null) {
-                logger.debug("Request body could not be read because it's empty.");
                 return null;
             }
             String line;
@@ -49,7 +48,7 @@ public class ContinuousIntegrationServer extends AbstractHandler
             }
             return builder.toString();
         } catch (final Exception e) {
-            logger.trace("Could not obtain the saml request body from the http request", e);
+            System.out.println("Could not obtain the saml request body from the http request");
             return null;
         }
     }
