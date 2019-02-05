@@ -34,7 +34,8 @@ public class ContinuousIntegrationServer extends AbstractHandler
         // 1st clone your repository
         // 2nd compile the code
         test = getParamsFromPost(request);
-        System.out.println(parse(test));
+        System.out.println(new Gson().fromJson(test,JsonObject.class).getAsJsonObject().get("check_run").getAsJsonObject().get("output").getAsJsonArray().get(0).getAsJsonObject().get("title").getAsString());
+
 
         response.getWriter().println("CI job done");
     }
@@ -56,15 +57,6 @@ public class ContinuousIntegrationServer extends AbstractHandler
         return params;
     }
 
-    public String parse(String jsonLine) {
-        JsonElement jelement = new JsonParser().parse(jsonLine);
-        JsonObject  jobject = jelement.getAsJsonObject();
-        jobject = jobject.getAsJsonObject("checkrun");
-        JsonArray jarray = jobject.getAsJsonArray("output");
-        jobject = jarray.get(0).getAsJsonObject();
-        String result = jobject.get("title").getAsString();
-        return result;
-    }
 
     // used to start the CI server in command line
     public static void main(String[] args) throws Exception
