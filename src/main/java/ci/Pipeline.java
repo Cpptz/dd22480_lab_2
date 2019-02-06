@@ -7,7 +7,11 @@ import org.eclipse.jgit.api.errors.JGitInternalException;
 import org.eclipse.jgit.api.errors.TransportException;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.IOException;
+import java.util.Properties;
+import java.util.ResourceBundle;
 import java.util.concurrent.TimeUnit;
 
 
@@ -54,20 +58,20 @@ public class Pipeline {
     /**
      * @param repoUrl            URL of the repository to clone
      * @param commitSha          unique id of the commit to build
-     * @param reposDirectory     directory  in which the repo  will be cloned (e.g. "./repos")
-     * @param logDirectoryGlobal directory in which the log directory for this repoUrl will be created ("./logs")
      */
-    public Pipeline(String repoUrl, String commitSha, String reposDirectory, String logDirectoryGlobal) {
+    public Pipeline(String repoUrl, String commitSha) {
         this.repoUrl = repoUrl;
         this.commitSha = commitSha;
-        this.clonedRepoDirectory = reposDirectory;
+
+
+        ResourceBundle rb = ResourceBundle.getBundle("server");
 
         // would give cpptz_dd22480_lab_1 for https://github.com/Cpptz/dd22480_lab_1
         this.repoId = this.repoUrl.substring(repoUrl.indexOf(".com") + 5).replace("/", "_").toLowerCase();
-        this.logDirectory = logDirectoryGlobal + "/" + this.repoId + "/";
+        this.logDirectory = rb.getString("logsDirectory") + "/" + this.repoId + "/";
         if (!new File(this.logDirectory).exists()) new File(this.logDirectory).mkdir();
 
-        this.clonedRepoDirectory = reposDirectory + "/" + this.repoId + "_" + this.commitSha + "/";
+        this.clonedRepoDirectory = rb.getString("reposDirectory") + "/" + this.repoId + "_" + this.commitSha + "/";
         new File(this.clonedRepoDirectory).mkdir();
 
 

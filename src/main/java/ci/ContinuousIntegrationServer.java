@@ -5,6 +5,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletException;
 
 import java.io.*;
+import java.util.ResourceBundle;
 
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.Request;
@@ -13,16 +14,11 @@ import org.eclipse.jetty.server.handler.AbstractHandler;
 /** 
  Skeleton of a ContinuousIntegrationServer which acts as webhook
  See the Jetty documentation for API documentation of those classes.
-*/
+ */
 public class ContinuousIntegrationServer extends AbstractHandler
 {
-    private String reposDirectory;
-    private String logsDirectory;
 
-    public ContinuousIntegrationServer(String reposDirectory, String logsDirectory){
-        this.reposDirectory = reposDirectory;
-        this.logsDirectory = logsDirectory;
-    }
+
 
     public void handle(String target,
                        Request baseRequest,
@@ -69,16 +65,13 @@ public class ContinuousIntegrationServer extends AbstractHandler
     public static void main(String[] args) throws Exception
     {
 
-//        Properties props = new Properties();
-//        props.load(new FileInputStream(args[0]));
-//        String reposDirectory = props.getProperty("reposDirectory");
-//        String logsDirectory= props.getProperty("logsDirectory");
-//        int port = Integer.parseInt(props.getProperty("port"));
-//
-//        Server server = new Server(port);
-//        server.setHandler(new ContinuousIntegrationServer(reposDirectory,logsDirectory));
-//        server.start();
-//        server.join();
+        ResourceBundle rb = ResourceBundle.getBundle("server");
+        int port = Integer.parseInt(rb.getString("port"));
+
+        Server server = new Server(port);
+        server.setHandler(new ContinuousIntegrationServer());
+        server.start();
+        server.join();
 
 
 
