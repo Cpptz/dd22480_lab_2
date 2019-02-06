@@ -1,3 +1,5 @@
+package ci;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletException;
@@ -8,7 +10,7 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 
-import com.google.gson.*;
+
 /**
  Skeleton of a ContinuousIntegrationServer which acts as webhook
  See the Jetty documentation for API documentation of those classes.
@@ -27,24 +29,17 @@ public class ContinuousIntegrationServer extends AbstractHandler
 
         System.out.println(target);
 
+
         // here you do all the continuous integration tasks
         // for example
         // 1st clone your repository
         // 2nd compile the code
-        System.out.println(parse(getRequestBody(request)));
-
+        String jsondata = (getRequestBody(request));
+		Parser p = new Parser();
+		Commit c = p.parseCommit(jsondata);
         response.getWriter().println("CI job done");
     }
 
-    public String parse(String jsonLine) {
-        JsonElement jelement = new JsonParser().parse(jsonLine);
-        JsonObject  jobject = jelement.getAsJsonObject();
-        jobject = jobject.getAsJsonObject("check_run");
-        JsonArray jarray = jobject.getAsJsonArray("output");
-        jobject = jarray.get(0).getAsJsonObject();
-        String result = jobject.get("title").getAsString();
-        return result;
-    }
 
     private String getRequestBody(final HttpServletRequest request) {
         final StringBuilder builder = new StringBuilder();
@@ -58,7 +53,7 @@ public class ContinuousIntegrationServer extends AbstractHandler
             }
             return builder.toString();
         } catch (final Exception e) {
-            System.out.println("Could not obtain the saml request body from the http request");
+            System.out.println("Could not obtain the request body from the http request");
             return null;
         }
     }
