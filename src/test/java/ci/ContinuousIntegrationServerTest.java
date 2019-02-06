@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class ContinuousIntegrationServerTest {
 
     @Test
-    void sendStatus() {
+    void sendStatus() throws Exception {
 
         String url =  "https://github.com/Cpptz/dd22480_lab_2";
         PipelineResult.PipelineStatus status = PipelineResult.PipelineStatus.SUCCESS;
