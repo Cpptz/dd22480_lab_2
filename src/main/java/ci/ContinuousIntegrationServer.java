@@ -4,7 +4,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletException;
 
-
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Base64;
@@ -12,6 +11,8 @@ import java.util.Base64;
 import com.google.gson.JsonObject;
 import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
+import java.io.*;
+import java.util.ResourceBundle;
 
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
@@ -22,21 +23,15 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 
-
-/**
-/**
+/** 
  Skeleton of a ContinuousIntegrationServer which acts as webhook
  See the Jetty documentation for API documentation of those classes.
-*/
+ */
+
 public class ContinuousIntegrationServer extends AbstractHandler
 {
-    private String reposDirectory;
-    private String logsDirectory;
 
-    public ContinuousIntegrationServer(String reposDirectory, String logsDirectory){
-        this.reposDirectory = reposDirectory;
-        this.logsDirectory = logsDirectory;
-    }
+
 
     public void handle(String target,
                        Request baseRequest,
@@ -48,18 +43,17 @@ public class ContinuousIntegrationServer extends AbstractHandler
         response.setStatus(HttpServletResponse.SC_OK);
         baseRequest.setHandled(true);
 
-
-
         System.out.println(target);
 
         // here you do all the continuous integration tasks
         // for example
         // 1st clone your repository
         // 2nd compile the code
-
+        String jsondata = (getRequestBody(request));
+		Parser p = new Parser();
+		Commit c = p.parseCommit(jsondata);
         response.getWriter().println("CI job done");
     }
-
 
     public static boolean sendStatus(PipelineResult result){
         // convert to lower case to avoid 422 unprocessable entity error
@@ -127,6 +121,20 @@ public class ContinuousIntegrationServer extends AbstractHandler
             //handle exception here
             return false;
 
+    private String getRequestBody(final HttpServletRequest request) {
+        final StringBuilder builder = new StringBuilder();
+        try (BufferedReader reader = request.getReader()) {
+            if (reader == null) {
+                return null;
+            }
+            String line;
+            while ((line = reader.readLine()) != null) {
+                builder.append(line);
+            }
+            return builder.toString();
+        } catch (final Exception e) {
+            System.out.println("Could not obtain the request body from the http request");
+            return null;
         }
     }
 
@@ -134,16 +142,13 @@ public class ContinuousIntegrationServer extends AbstractHandler
     public static void main(String[] args) throws Exception
     {
 
-//        Properties props = new Properties();
-//        props.load(new FileInputStream(args[0]));
-//        String reposDirectory = props.getProperty("reposDirectory");
-//        String logsDirectory= props.getProperty("logsDirectory");
-//        int port = Integer.parseInt(props.getProperty("port"));
-//
-//        Server server = new Server(port);
-//        server.setHandler(new ContinuousIntegrationServer(reposDirectory,logsDirectory));
-//        server.start();
-//        server.join();
+        ResourceBundle rb = ResourceBundle.getBundle("server");
+        int port = Integer.parseInt(rb.getString("port"));
+
+        Server server = new Server(port);
+        server.setHandler(new ContinuousIntegrationServer());
+        server.start();
+        server.join();
 
 
 

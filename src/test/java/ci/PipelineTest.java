@@ -46,7 +46,7 @@ class PipelineTest {
 
 
         // use a wrong url
-        Pipeline pipeline = new Pipeline(badUrl, "9ed9801", reposDirectory, logsDirectory);
+        Pipeline pipeline = new Pipeline(badUrl, "9ed9801");
 
         // this should throw an exception
         assertThrows(CloneException.class, () -> {
@@ -57,7 +57,7 @@ class PipelineTest {
 
 
         // TEST that it doesn't throw any exceptions
-        Pipeline pipeline1 = new Pipeline(goodUrl, "9ed9801", reposDirectory, logsDirectory);
+        Pipeline pipeline1 = new Pipeline(goodUrl, "9ed9801");
 
         try {
             pipeline1.cloneRepository();
@@ -76,7 +76,7 @@ class PipelineTest {
     void checkoutRepo() {
 
         // valid url, wrong commitsha
-        Pipeline pipeline1 = new Pipeline(goodUrl, "8geg7ze", reposDirectory, logsDirectory);
+        Pipeline pipeline1 = new Pipeline(goodUrl, "8geg7ze");
         try {
             pipeline1.cloneRepository();
             // this should throw an exception
@@ -94,7 +94,7 @@ class PipelineTest {
 
 
         // valid url, valid commitSha
-        Pipeline pipeline2 = new Pipeline(goodUrl, "9ed9801", reposDirectory, logsDirectory);
+        Pipeline pipeline2 = new Pipeline(goodUrl, "9ed9801");
         Exception ex = null;
         try {
             pipeline2.cloneRepository();
@@ -114,7 +114,7 @@ class PipelineTest {
 
     @Test
     void compileRepo() {
-        Pipeline pipeline = new Pipeline(goodUrl, "9ed9801", reposDirectory, logsDirectory);
+        Pipeline pipeline = new Pipeline(goodUrl, "9ed9801");
 
         // valid url, valid sha + valid code => should compile : return true (no exceptions should be thrown)
         try {
@@ -146,7 +146,7 @@ class PipelineTest {
 
     @Test
     void testRepo() {
-        Pipeline pipeline = new Pipeline(goodUrl, "9ed9801", reposDirectory, logsDirectory);
+        Pipeline pipeline = new Pipeline(goodUrl, "9ed9801");
 
         // valid url, valid sha + valid code => should pass tests : return true (no exceptions should be thrown)
         try {
@@ -178,7 +178,7 @@ class PipelineTest {
     @Test
     void runPipeline(){
         // valid url, valid commitSha, valid code
-        Pipeline pipeline = new Pipeline(goodUrl, "9ed9801", reposDirectory, logsDirectory);
+        Pipeline pipeline = new Pipeline(goodUrl, "9ed9801");
 
         PipelineResult result = pipeline.runPipeline();
 
@@ -190,7 +190,7 @@ class PipelineTest {
         pipeline.clear();
 
         // valid url, not valid commitSha, valid code
-        Pipeline pipeline_1 = new Pipeline(goodUrl, "881114", reposDirectory, logsDirectory);
+        Pipeline pipeline_1 = new Pipeline(goodUrl, "881114");
 
         PipelineResult result_1 = pipeline_1.runPipeline();
 
