@@ -5,26 +5,14 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletException;
 
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Base64;
 
 import com.google.gson.JsonObject;
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.Credentials;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
-import org.apache.http.impl.client.BasicCredentialsProvider;
-import org.apache.http.impl.client.CloseableHttpClient;
-import java.nio.file.Paths;
-import java.util.Properties;
-import java.util.ResourceBundle;
 
-import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 
@@ -73,9 +61,20 @@ public class ContinuousIntegrationServer extends AbstractHandler
     }
 
 
-    public static boolean sendStatus(PipelineResult result, String description){
+    public static boolean sendStatus(PipelineResult result){
         // convert to lower case to avoid 422 unprocessable entity error
-        String pipelineStatus = result.status.toString().toLowerCase();
+        String status = result.status.toString().toLowerCase();
+        String description = "Could not find description.";
+        switch (status) {
+            case "success": description = "The build succeeded!";
+                break;
+            case "error": description = "There was an error!";
+                break;
+            case "failure": description = "The build failed!";
+        }
+
+
+
         String ownerAndRepo= result.remoteUrl.substring(result.remoteUrl.indexOf(".com") + 5);
 
         String username = "cpptz";
@@ -110,7 +109,7 @@ public class ContinuousIntegrationServer extends AbstractHandler
 
             // create the payload
             JsonObject jsonObject = new JsonObject();
-            jsonObject.addProperty("state", pipelineStatus);
+            jsonObject.addProperty("state", status);
             jsonObject.addProperty("description", description);
             jsonObject.addProperty("context", "ci/dd2480");
             jsonObject.addProperty("target-url", "");
