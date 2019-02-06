@@ -8,6 +8,7 @@ import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
+
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.AbstractHandler;
@@ -16,10 +17,15 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
+import java.io.*;
 import java.io.UnsupportedEncodingException;
+import java.util.Scanner;
 import java.util.Base64;
+import java.util.regex.*;
 import java.util.ResourceBundle;
+import java.lang.*;
 
 /**
  * Skeleton of a ContinuousIntegrationServer which acts as webhook
@@ -38,16 +44,36 @@ public class ContinuousIntegrationServer extends AbstractHandler {
         response.setStatus(HttpServletResponse.SC_OK);
         baseRequest.setHandled(true);
 
-        System.out.println(target);
-
+		// if target is file
+		if (target.substring(0,7).equals("/file/:")) {
+			// making it a bit safter for the server
+			if (!target.substring(7).replaceAll("[a-zA-Z]", "").equals("")) {
+				response.getWriter().println("Not a valid url");
+			}
+			else {
+				// hard coded for now
+				File fileName = new File("./logs/" + target.substring(7) + ".txt");
+				Scanner scanner = new Scanner(fileName);
+				String content = scanner.useDelimiter("\\A").next();
+				scanner.close();
+				response.setHeader("Content-Disposition", "inline; filename=\"" + fileName + "\"");
+				response.setContentType("text/plain");
+				response.getWriter().println(content);
+			}
+		}
+		// if the target is the payload from github
+		if (target.substring(0,9).equals("/payload/")) {
+			String jsondata = (getRequestBody(request));
+			Parser p = new Parser();
+			Commit c = p.parseCommit(jsondata);
+			response.getWriter().println("CI job done");
+		}
+		
         // here you do all the continuous integration tasks
         // for example
         // 1st clone your repository
         // 2nd compile the code
-        String jsondata = (getRequestBody(request));
-        Parser p = new Parser();
-        Commit c = p.parseCommit(jsondata);
-        response.getWriter().println("CI job done");
+
     }
 
     private String getRequestBody(final HttpServletRequest request) {
