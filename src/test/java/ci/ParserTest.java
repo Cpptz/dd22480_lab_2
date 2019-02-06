@@ -27,7 +27,7 @@ class ParserTest {
         assertEquals(c.ref, ref);
         assertEquals(c.timestamp, timestamp);
         assertEquals(c.name, name);
-        assertEquals(c.message, message)
+        assertEquals(c.message, message);
     }
 
 }
