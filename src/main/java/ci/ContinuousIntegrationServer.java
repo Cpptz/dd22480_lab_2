@@ -73,12 +73,10 @@ public class ContinuousIntegrationServer extends AbstractHandler
     }
 
 
-    public static boolean sendStatus(String pipelineStatus, String description, String repoUrl, String commitSha){
-
-
-
-
-        String ownerAndRepo= repoUrl.substring(repoUrl.indexOf(".com") + 5);
+    public static boolean sendStatus(PipelineResult result, String description){
+        // convert to lower case to avoid 422 unprocessable entity error
+        String pipelineStatus = result.status.toString().toLowerCase();
+        String ownerAndRepo= result.remoteUrl.substring(result.remoteUrl.indexOf(".com") + 5);
 
         String username = "cpptz";
         String token = "YmRiMmU0NjQxZGRjNmE0ZTI2OTU0OTAzZjEwYTQ5MzE1YzZmOTdiZg==";
@@ -106,14 +104,14 @@ public class ContinuousIntegrationServer extends AbstractHandler
 
             // end point of github api to post the status
             String postUrl =
-                    "https://api.github.com/repos/"+ownerAndRepo+ "/statuses" + "/"+commitSha;
+                    "https://api.github.com/repos/"+ownerAndRepo+ "/statuses" + "/"+result.commitSha;
             HttpPost request = new HttpPost(postUrl);
             request.setHeader("Authorization","Basic "+encoding);
 
             // create the payload
             JsonObject jsonObject = new JsonObject();
             jsonObject.addProperty("state", pipelineStatus);
-            jsonObject.addProperty("description", pipelineStatus);
+            jsonObject.addProperty("description", description);
             jsonObject.addProperty("context", "ci/dd2480");
             jsonObject.addProperty("target-url", "");
             StringEntity params =new StringEntity(jsonObject.toString());
@@ -122,7 +120,6 @@ public class ContinuousIntegrationServer extends AbstractHandler
             request.addHeader("Accept", "application/json");
             HttpResponse response = httpClient.execute(request);
 //            ((CloseableHttpClient) httpClient).close();
-
             return response.getStatusLine().getStatusCode()==201;
 
         }catch (Exception ex) {
