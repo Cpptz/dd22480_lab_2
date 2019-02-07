@@ -22,6 +22,8 @@ import java.io.UnsupportedEncodingException;
 import java.util.Base64;
 import java.util.ResourceBundle;
 import java.util.Scanner;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Skeleton of a ContinuousIntegrationServer which acts as webhook
@@ -61,16 +63,24 @@ public class ContinuousIntegrationServer extends AbstractHandler {
 		}
 		// if the target is the payload from github
 		if (target.substring(0,9).equals("/webhook/")) {
-			String jsondata = (getRequestBody(request));
-			Parser p = new Parser();
-			Commit c = p.parseCommit(jsondata);
-			response.getWriter().println("CI job done");
+
+		    // this runs in a different thread
+            ExecutorService executor = Executors.newSingleThreadExecutor();
+            executor.submit(() -> {
+                // cal pipeline and sendstatus ...
+                String jsondata = (getRequestBody(request));
+                Parser p = new Parser();
+                Commit c = p.parseCommit(jsondata);
+                Pipeline pipeline = new  Pipeline(c.url, c.sha);
+                PipelineResult pipelineResult = pipeline.runPipeline();
+                sendStatus(pipelineResult);
+
+            });
+
+
+            response.getWriter().println("CI job done");
+
 		}
-		
-        // here you do all the continuous integration tasks
-        // for example
-        // 1st clone your repository
-        // 2nd compile the code
 
     }
 
@@ -97,7 +107,7 @@ public class ContinuousIntegrationServer extends AbstractHandler {
      * @return                 The status has been sent if no exception
      * @throws Exception       Response status code is not 201
      */
-    public static boolean sendStatus(PipelineResult result) throws Exception {
+    public static boolean sendStatus(PipelineResult result) {
         // convert to lower case to avoid 422 unprocessable entity error
         String status = result.status.toString().toLowerCase();
         String description = "Could not find description.";
