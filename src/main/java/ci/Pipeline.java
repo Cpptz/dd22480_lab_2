@@ -7,6 +7,9 @@ import org.eclipse.jgit.api.errors.JGitInternalException;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
 import java.util.concurrent.TimeUnit;
 
@@ -77,7 +80,9 @@ public class Pipeline {
      */
     public PipelineResult runPipeline() {
 
-        PipelineResult result = new PipelineResult(this.commitSha, this.repoUrl);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+                .withZone(ZoneId.systemDefault());
+        PipelineResult result = new PipelineResult(this.commitSha, this.repoUrl, formatter.format(LocalDateTime.now()));
         try {
             cloneRepository();
             checkoutRepo();
@@ -86,8 +91,18 @@ public class Pipeline {
             boolean isCompiling = compileRepo("mvn compile -B", timeOut);
             boolean isTestPassing = testRepo("mvn test -B", timeOut);
 
-            result.status = (isCompiling && isTestPassing) ? PipelineResult.PipelineStatus.SUCCESS :
-                    PipelineResult.PipelineStatus.FAILURE;
+
+            if(isCompiling && isTestPassing){
+                result.status = PipelineResult.PipelineStatus.SUCCESS;
+            }
+            else{
+                result.status = PipelineResult.PipelineStatus.FAILURE;
+                if(!isCompiling){
+                    result.errorCause = PipelineResult.ErrorCause.COMPILATION;
+                }else{
+                    result.errorCause = PipelineResult.ErrorCause.TEST;
+                }
+            }
 
 
         } catch (CloneException e) {

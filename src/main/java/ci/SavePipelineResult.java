@@ -40,7 +40,7 @@ public class SavePipelineResult {
             //Make every attribute a string and append to the file
             String resultAttributes = result.status.toString() + "," + result.remoteUrl + "," + result.commitSha +
                     "," + result.errorCause.toString() + "," + result.compileLog + "," + result.testLog +
-                    "," + result.compileLogPath + "," + result.testLogPath + "\n";
+                    "," + result.compileLogPath + "," + result.testLogPath + ","+ result.time+ "\n";
             writer.append(resultAttributes);
             writer.close();
         }
@@ -62,7 +62,7 @@ public class SavePipelineResult {
             String[] pipelineResultAtt;
             while (pipeLineObject != null) {
                 // Create a PipelineResult object and fill in the information from the history file.
-                PipelineResult pipelineResult = new PipelineResult("", "");
+                PipelineResult pipelineResult = new PipelineResult();
                 pipelineResultAtt = pipeLineObject.split(",");
                 pipelineResult.status = PipelineResult.PipelineStatus.valueOf(pipelineResultAtt[0]);
                 pipelineResult.remoteUrl = pipelineResultAtt[1];
@@ -72,6 +72,7 @@ public class SavePipelineResult {
                 pipelineResult.testLog = Boolean.valueOf(pipelineResultAtt[5]);
                 pipelineResult.compileLogPath = pipelineResultAtt[6];
                 pipelineResult.testLogPath = pipelineResultAtt[7];
+                pipelineResult.time = pipelineResultAtt[8];
                 // Add the created object to the list.
                 resultList.add(pipelineResult);
 

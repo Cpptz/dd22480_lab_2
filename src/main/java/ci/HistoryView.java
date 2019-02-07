@@ -8,6 +8,9 @@ import java.net.UnknownHostException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -33,8 +36,9 @@ public class HistoryView {
 
             for(PipelineResult pipelineResult: pipelineResultList){
                 String row = "<tr>";
-                row+="<td><a href=\""+pipelineResult.remoteUrl+"/commit/"+pipelineResult.commitSha+"\">"+pipelineResult.commitSha+"</a" +
+                row+="<td><a href=\""+pipelineResult.remoteUrl+"/commit/"+pipelineResult.commitSha+"\">"+pipelineResult.commitSha.substring(0,7)+"</a" +
                         "></td>";
+                row+="<td>"+pipelineResult.time+"</td>";
                 row+="<td value=\""+pipelineResult.status.toString().toLowerCase()+"\">"+pipelineResult.status.toString().toLowerCase()+
                         "</td>";
                 if(pipelineResult.compileLog) {
@@ -80,5 +84,6 @@ public class HistoryView {
 
 
     }
+
 
 }
