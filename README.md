@@ -72,7 +72,9 @@ This is what we have achieved
 	* Combining everything in the ``handle`` method
 
 * Robin Gunning
-    
+    	* Parsing of the github payload
+	* /file endpoint
+	* Hosting server
     
 * Fredrik Norrman
 
