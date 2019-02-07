@@ -30,9 +30,9 @@ We have one main dependency: [Junit 5](https://junit.org/junit5/)
 
 ### Test
 We have written unit tests for methods of:
-* [ContinousIntegrationServer.java](src/main/java/main/ContinousIntegrationServer.java) in [ContinousIntegrationServerTest.java](src/test/java/main/ContinousIntegrationServerTest.java )
-* [Parser.java](src/test/java/main/Parser.java) in [ParserTest.java](src/test/java/main/ParserTest.java)
-* [Pipeline.java](src/test/java/main/Pipeline.java) in [PipelineTest.java](src/test/java/main/PipelineTest.java)
+* [ContinousIntegrationServer.java](/src/main/java/ci/ContinuousIntegrationServer.java) in [ContinousIntegrationServerTest.java](/src/test/java/ci/ContinuousIntegrationServerTest.java)
+* [Parser.java](src/main/java/ci/Parser.java) in [ParserTest.java](/src/test/java/ci/ParserTest.java)
+* [Pipeline.java](src/main/java/ci/Pipeline.java) in [PipelineTest.java](/src/test/java/ci/PipelineTest.java)
 
 ### How to Run It
 #### Terminal
