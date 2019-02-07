@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        table {
+            font-family: arial, sans-serif;
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        td, th {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+
+        tr:nth-child(even) {
+            background-color: #dddddd;
+        }
+
+        td:nth-child(2)[value="failure"] {
+            background-color: #FF0000;
+        }
+        td:nth-child(2)[value="error"] {
+            background-color: #FF0000;
+        }
+
+        td:nth-child(2)[value="success"] {
+            background-color: #4CAF50;
+        }
+
+        td:nth-child(2)
+    </style>
+</head>
+<body>
+
+<h2>CI server</h2>
+
+<table>
+    <tr>
+        <th>Commit Sha</th>
+        <th>Status</th>
+        <th>Compile log</th>
+        <th>Test log</th>
+        <th>Error Cause</th>
+    </tr>
+    insert_code
+</table>
+</body>
+</html>

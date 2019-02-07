@@ -43,7 +43,7 @@ class SavePipelineResultTest {
         SavePipelineResult savePipeline = new SavePipelineResult(historyFile);
         PipelineResult result = new PipelineResult("testsha", "testurl");
 
-        result.failureCause = PipelineResult.FailureCause.CLONE;
+        result.errorCause = PipelineResult.ErrorCause.CLONE;
         result.status = PipelineResult.PipelineStatus.ERROR;
         // save the result to the file
         savePipeline.saveResult(result);
@@ -52,7 +52,7 @@ class SavePipelineResultTest {
             BufferedReader reader = new BufferedReader(new FileReader(historyFile));
             String pipeLineObject = reader.readLine();
             // Should pass
-            assertEquals("ERROR,testurl,testsha,CLONE,false,false,null,null", pipeLineObject);
+            assertEquals("ERROR,testurl,testsha,CLONE,false,false, , ", pipeLineObject);
         }
         catch (IOException e) {
             Assertions.fail();
@@ -66,14 +66,14 @@ class SavePipelineResultTest {
         SavePipelineResult savePipeline = new SavePipelineResult(historyFile);
         PipelineResult result = new PipelineResult("testsha", "testurl");
 
-        result.failureCause = PipelineResult.FailureCause.CLONE;
+        result.errorCause = PipelineResult.ErrorCause.CLONE;
         result.status = PipelineResult.PipelineStatus.ERROR;
         // save the result to the file
         savePipeline.saveResult(result);
 
         // restore history from file to object
         List<PipelineResult> results = new ArrayList<>();
-        results = savePipeline.retrieveAll(historyFile);
+        results = savePipeline.retrieveAll();
         result = results.get(0);
 
         //check if the object is created properly.
@@ -81,9 +81,9 @@ class SavePipelineResultTest {
         assertEquals(PipelineResult.PipelineStatus.ERROR, result.status );
         assertEquals("testurl", result.remoteUrl);
         assertEquals("testsha", result.commitSha);
-        assertEquals(PipelineResult.FailureCause.CLONE, result.failureCause);
-        assertEquals("null", result.compileLogPath);
-        assertEquals("null", result.testLogPath);
+        assertEquals(PipelineResult.ErrorCause.CLONE, result.errorCause);
+        assertEquals(" ", result.compileLogPath);
+        assertEquals(" ", result.testLogPath);
         assertFalse(result.compileLog);
         assertFalse(result.testLog);
 

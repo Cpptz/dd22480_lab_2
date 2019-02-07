@@ -15,11 +15,11 @@ public class PipelineResult {
         /**
          * The pipeline was not fully executed
          */
-        FAILURE,
+        ERROR,
         /**
          * Either the compilation or the test failed
          */
-        ERROR,
+        FAILURE,
         /**
          * Commpiles and the tests passed
          */
@@ -30,23 +30,23 @@ public class PipelineResult {
     /**
      * Cause of the failure
      */
-    public enum FailureCause{
+    public enum ErrorCause {
         CLONE,
         CHECKOUT,
         COMPILATION,
-        TEST
+        TEST,
+        NONE
 
     }
-
     public PipelineStatus status;
     public String remoteUrl;
     public String commitSha;
 
-    public FailureCause failureCause;
+    public ErrorCause errorCause = ErrorCause.NONE;
     public boolean compileLog;
     public boolean testLog;
-    public String compileLogPath;
-    public String testLogPath;
+    public String compileLogPath = " ";
+    public String testLogPath = " ";
 
 
     public PipelineResult(String commitSha, String remoteUrl) {
