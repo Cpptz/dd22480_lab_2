@@ -55,13 +55,13 @@ All of us agreed on a [guide](CONTRIBUTING.md) for contribution
 
 This is what we have achieved 
 * Cyril Pottiez
-** sendStatus()
-** sendStatusTest()
+	* sendStatus()
+	* sendStatusTest()
 
 * Sara Ersson
-** sendStatus()
-** sendStatusTest()
-** README
+	* sendStatus()
+	* sendStatusTest()
+	* README
 	
 * Viktor Widin
 
