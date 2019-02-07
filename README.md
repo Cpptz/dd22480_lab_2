@@ -40,6 +40,10 @@ Then at the root folder, you can launch all tests by running
 ```bash
 mvn test -B
 ```
+Can can also lauch the server using the following command:
+```bash
+mvn exec:java -Dexec.mainClass="ci.ContinuousIntegrationServer"
+```
 
 #### IDE
 Most of use *Intellij*.  
@@ -64,7 +68,8 @@ This is what we have achieved
 	* README
 	
 * Viktor Widin
-
+	* Return HTML formatted history
+	* Combining everything in the ``handle`` method
 
 * Robin Gunning
     
