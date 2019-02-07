@@ -9,14 +9,17 @@ import java.util.List;
  */
 public class SavePipelineResult {
 
+    /**
+     * file where the results are stored
+     */
     public File pipelineResult;
 
 
     /**
      * Create a new file if it's not already created.
      */
-    public SavePipelineResult() {
-        pipelineResult = new File("pipelineResult.txt");
+    public SavePipelineResult(String filename) {
+        pipelineResult = new File(filename);
         if (!pipelineResult.exists()) {
             try {
                 pipelineResult.createNewFile();
@@ -36,7 +39,7 @@ public class SavePipelineResult {
             PrintWriter writer = new PrintWriter(new FileWriter(pipelineResult, true));
             //Make every attribute a string and append to the file
             String resultAttributes = result.status.toString() + "," + result.remoteUrl + "," + result.commitSha +
-                    "," + result.failureCause.toString() + "," + result.compileLog + "," + result.testLog +
+                    "," + result.errorCause.toString() + "," + result.compileLog + "," + result.testLog +
                     "," + result.compileLogPath + "," + result.testLogPath + "\n";
             writer.append(resultAttributes);
             writer.close();
@@ -54,7 +57,7 @@ public class SavePipelineResult {
     public List<PipelineResult> retrieveAll(){
         List<PipelineResult> resultList = new ArrayList<>();
         try {
-            BufferedReader reader = new BufferedReader(new FileReader("pipelineResult.txt"));
+            BufferedReader reader = new BufferedReader(new FileReader(pipelineResult));
             String pipeLineObject = reader.readLine();
             String[] pipelineResultAtt;
             while (pipeLineObject != null) {
@@ -64,7 +67,7 @@ public class SavePipelineResult {
                 pipelineResult.status = PipelineResult.PipelineStatus.valueOf(pipelineResultAtt[0]);
                 pipelineResult.remoteUrl = pipelineResultAtt[1];
                 pipelineResult.commitSha = pipelineResultAtt[2];
-                pipelineResult.failureCause = PipelineResult.FailureCause.valueOf(pipelineResultAtt[3]);
+                pipelineResult.errorCause = PipelineResult.ErrorCause.valueOf(pipelineResultAtt[3]);
                 pipelineResult.compileLog = Boolean.valueOf(pipelineResultAtt[4]);
                 pipelineResult.testLog = Boolean.valueOf(pipelineResultAtt[5]);
                 pipelineResult.compileLogPath = pipelineResultAtt[6];

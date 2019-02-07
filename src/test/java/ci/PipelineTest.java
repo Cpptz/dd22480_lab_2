@@ -5,7 +5,6 @@ import org.junit.jupiter.api.*;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Paths;
 import java.util.ResourceBundle;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -192,8 +191,8 @@ class PipelineTest {
 
         PipelineResult result_1 = pipeline_1.runPipeline();
 
-        assertEquals(PipelineResult.PipelineStatus.FAILURE,result_1.status);
-        assertEquals(PipelineResult.FailureCause.CHECKOUT,result_1.failureCause);
+        assertEquals(PipelineResult.PipelineStatus.ERROR,result_1.status);
+        assertEquals(PipelineResult.ErrorCause.CHECKOUT,result_1.errorCause);
         assertFalse(result_1.compileLog);
         assertFalse(result_1.testLog);
 

@@ -4,13 +4,9 @@ import org.apache.commons.io.FileUtils;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.api.errors.JGitInternalException;
-import org.eclipse.jgit.api.errors.TransportException;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.IOException;
-import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.concurrent.TimeUnit;
 
@@ -30,15 +26,6 @@ public class Pipeline {
      * unique id of the commit to build
      */
     private String commitSha;
-
-    public String getClonedRepoDirectory() {
-        return clonedRepoDirectory;
-    }
-
-    public String getLogDirectory() {
-        return logDirectory;
-    }
-
     /**
      * directory of the cloned repo. Will be deleted at the end
      * of the run of the pipeline
@@ -56,8 +43,8 @@ public class Pipeline {
 
 
     /**
-     * @param repoUrl            URL of the repository to clone
-     * @param commitSha          unique id of the commit to build
+     * @param repoUrl   URL of the repository to clone
+     * @param commitSha unique id of the commit to build
      */
     public Pipeline(String repoUrl, String commitSha) {
         this.repoUrl = repoUrl;
@@ -66,8 +53,12 @@ public class Pipeline {
 
         ResourceBundle rb = ResourceBundle.getBundle("server");
 
-        // would give cpptz_dd22480_lab_1 for https://github.com/Cpptz/dd22480_lab_1
-        this.repoId = this.repoUrl.substring(repoUrl.indexOf(".com") + 5).replace("/", "_").toLowerCase();
+        // would give cpptzdd22480lab1 for https://github.com/Cpptz/dd22480_lab_1
+        this.repoId =
+                this.repoUrl.substring(repoUrl.indexOf(".com") + 5)
+                        .replace("/", "")
+                        .replace("_", "")
+                        .toLowerCase();
         this.logDirectory = rb.getString("logsDirectory") + "/" + this.repoId + "/";
         if (!new File(this.logDirectory).exists()) new File(this.logDirectory).mkdirs();
 
@@ -91,31 +82,28 @@ public class Pipeline {
             cloneRepository();
             checkoutRepo();
 
-            // TODO/ OPTIONNAL: handle this with .properties file or .yml in the repo
-            // currently only Java with maven
-            // timeOut of 20 s
-            int timeOut = 20;
+            int timeOut = 60;
             boolean isCompiling = compileRepo("mvn compile -B", timeOut);
             boolean isTestPassing = testRepo("mvn test -B", timeOut);
 
             result.status = (isCompiling && isTestPassing) ? PipelineResult.PipelineStatus.SUCCESS :
-                    PipelineResult.PipelineStatus.ERROR;
+                    PipelineResult.PipelineStatus.FAILURE;
 
 
         } catch (CloneException e) {
-            result.status = PipelineResult.PipelineStatus.FAILURE;
-            result.failureCause = PipelineResult.FailureCause.CLONE;
+            result.status = PipelineResult.PipelineStatus.ERROR;
+            result.errorCause = PipelineResult.ErrorCause.CLONE;
         } catch (TestException e) {
-            result.status = PipelineResult.PipelineStatus.FAILURE;
-            result.failureCause = PipelineResult.FailureCause.TEST;
+            result.status = PipelineResult.PipelineStatus.ERROR;
+            result.errorCause = PipelineResult.ErrorCause.TEST;
         } catch (CompileException e) {
             e.printStackTrace();
-            result.status = PipelineResult.PipelineStatus.FAILURE;
-            result.failureCause = PipelineResult.FailureCause.COMPILATION;
+            result.status = PipelineResult.PipelineStatus.ERROR;
+            result.errorCause = PipelineResult.ErrorCause.COMPILATION;
 
         } catch (CheckoutException e) {
-            result.status = PipelineResult.PipelineStatus.FAILURE;
-            result.failureCause = PipelineResult.FailureCause.CHECKOUT;
+            result.status = PipelineResult.PipelineStatus.ERROR;
+            result.errorCause = PipelineResult.ErrorCause.CHECKOUT;
         }
 
 
@@ -128,7 +116,7 @@ public class Pipeline {
 
         if (new File(getTestLogPath()).exists()) {
             result.testLog = true;
-            result.testLogPath = getCompileLogPath();
+            result.testLogPath = getTestLogPath();
         } else {
             result.testLog = false;
         }
@@ -154,6 +142,20 @@ public class Pipeline {
         return this.logDirectory + "test_" + this.commitSha + ".log";
     }
 
+
+    /**
+     * @return
+     */
+    public String getClonedRepoDirectory() {
+        return clonedRepoDirectory;
+    }
+
+    /**
+     * @return
+     */
+    public String getLogDirectory() {
+        return logDirectory;
+    }
 
     /**
      * @throws CloneException if an errors happens

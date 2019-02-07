@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Base64;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
@@ -37,53 +38,76 @@ public class ContinuousIntegrationServer extends AbstractHandler {
                        HttpServletRequest request,
                        HttpServletResponse response)
             throws IOException, ServletException {
-        response.setContentType("text/html;charset=utf-8");
-        response.setStatus(HttpServletResponse.SC_OK);
-        baseRequest.setHandled(true);
 
-		// if target is file
-		if (target.substring(0,6).equals("/file/")) {
-			// making it a bit safter for the server
-			if (!target.substring(6).replaceAll("[a-zA-Z_]", "").equals("")) {
-				response.getWriter().println("Not a valid url");
-			}
-			else {
-				// hard coded for now
+
+        // if target is file
+        if (target.substring(0, 6).equals("/file/")) {
+            // making it a bit safter for the server
+            if (!target.substring(6).replaceAll("[a-zA-Z0-9_]", "").equals("")) {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            } else {
+                // hard coded for now
                 ResourceBundle rb = ResourceBundle.getBundle("server");
                 String logDirectory = rb.getString("logsDirectory");
-                String filePath = target.substring(6).replaceFirst("_","/");
-				File fileName = new File(logDirectory + filePath + ".log");
-				Scanner scanner = new Scanner(fileName);
-				String content = scanner.useDelimiter("\\A").next();
-				scanner.close();
-				response.setHeader("Content-Disposition", "inline; filename=\"" + fileName + "\"");
-				response.setContentType("text/plain");
-				response.getWriter().println(content);
-			}
-		}
-		// if the target is the payload from github
-		if (target.substring(0,9).equals("/webhook/")) {
+                String filePath = target.substring(6).replaceFirst("_", "/");
+                File fileName = new File(logDirectory+"/" + filePath + ".log");
+                boolean a = fileName.exists();
+                Scanner scanner = new Scanner(fileName);
+                String content = scanner.useDelimiter("\\A").next();
+                scanner.close();
+                response.setHeader("Content-Disposition", "inline; filename=\"" + fileName + "\"");
+                response.setContentType("text/plain");
+                response.getWriter().println(content);
+                baseRequest.setHandled(true);
+            }
 
-		    // this runs in a different thread
+            System.out.println("/file");
+        }
+        // if the target is the payload from github
+        else if (target.substring(0, 8).equals("/webhook")) {
+
+            // this runs in a different thread
             ExecutorService executor = Executors.newSingleThreadExecutor();
             executor.submit(() -> {
                 // cal pipeline and sendstatus ...
                 String jsondata = (getRequestBody(request));
                 Parser p = new Parser();
                 Commit c = p.parseCommit(jsondata);
-                Pipeline pipeline = new  Pipeline(c.url, c.sha);
+                Pipeline pipeline = new Pipeline(c.url, c.sha);
                 PipelineResult pipelineResult = pipeline.runPipeline();
                 sendStatus(pipelineResult);
+                SavePipelineResult savePipelineResult =
+                        new SavePipelineResult(ResourceBundle.getBundle("server").getString("historyFile"));
+                savePipelineResult.saveResult(pipelineResult);
 
             });
 
-            System.out.println("Job done");
+            System.out.println("/webhook");
             response.getWriter().println("CI job done");
+            response.setContentType("text/html;charset=utf-8");
+            response.setStatus(HttpServletResponse.SC_OK);
+            baseRequest.setHandled(true);
 
-		}
+        } else if (target.substring(0, 8).equals("/history")) {
+            System.out.println("/history");
+            SavePipelineResult savePipelineResult =
+                    new SavePipelineResult(ResourceBundle.getBundle("server").getString("historyFile"));
+            List<PipelineResult> pipelineResults = savePipelineResult.retrieveAll();
+            HistoryView.writeHistory(response.getWriter(), pipelineResults);
+            response.setContentType("text/html;charset=utf-8");
+            baseRequest.setHandled(true);
+            response.setStatus(HttpServletResponse.SC_OK);
+
+
+        }
+
 
     }
 
+    /**
+     * @param request
+     * @return the body of the request
+     */
     private String getRequestBody(final HttpServletRequest request) {
         final StringBuilder builder = new StringBuilder();
         try (BufferedReader reader = request.getReader()) {
@@ -102,10 +126,9 @@ public class ContinuousIntegrationServer extends AbstractHandler {
     }
 
     /**
-     *
-     * @param result           The result from running the pipeline
-     * @return                 The status has been sent if no exception
-     * @throws Exception       Response status code is not 201
+     * @param result The result from running the pipeline
+     * @return The status has been sent if no exception
+     * @throws Exception Response status code is not 201
      */
     public static boolean sendStatus(PipelineResult result) {
         // convert to lower case to avoid 422 unprocessable entity error
