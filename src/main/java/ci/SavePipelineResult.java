@@ -15,8 +15,8 @@ public class SavePipelineResult {
     /**
      * Create a new file if it's not already created.
      */
-    public SavePipelineResult() {
-        pipelineResult = new File("pipelineResult.txt");
+    public SavePipelineResult(String filename) {
+        pipelineResult = new File(filename);
         if (!pipelineResult.exists()) {
             try {
                 pipelineResult.createNewFile();
@@ -51,10 +51,10 @@ public class SavePipelineResult {
      * as PipelineResult objects.
      * @return A list with PipelineResult objects.
      */
-    public List<PipelineResult> retrieveAll(){
+    public List<PipelineResult> retrieveAll(String filename){
         List<PipelineResult> resultList = new ArrayList<>();
         try {
-            BufferedReader reader = new BufferedReader(new FileReader("pipelineResult.txt"));
+            BufferedReader reader = new BufferedReader(new FileReader(filename));
             String pipeLineObject = reader.readLine();
             String[] pipelineResultAtt;
             while (pipeLineObject != null) {
