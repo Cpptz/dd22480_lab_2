@@ -5,6 +5,7 @@ import org.junit.jupiter.api.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.ResourceBundle;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -25,16 +26,13 @@ class PipelineTest {
         reposDirectory = rb.getString("reposDirectory");
         logsDirectory = rb.getString("logsDirectory");
 
-
-        new File(reposDirectory).mkdir();
-        new File(logsDirectory).mkdir();
     }
 
     @AfterAll
     static void tearDownAll(){
         try {
-            FileUtils.deleteDirectory(new File(reposDirectory));
-            FileUtils.deleteDirectory(new File(logsDirectory));
+            File rootTestDir = new File(ResourceBundle.getBundle("server").getString("rootTestDirectory"));
+            FileUtils.deleteDirectory(rootTestDir);
         } catch (IOException e) {
 //            e.printStackTrace();
             Assertions.fail();

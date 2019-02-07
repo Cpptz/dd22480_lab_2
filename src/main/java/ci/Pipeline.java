@@ -69,10 +69,10 @@ public class Pipeline {
         // would give cpptz_dd22480_lab_1 for https://github.com/Cpptz/dd22480_lab_1
         this.repoId = this.repoUrl.substring(repoUrl.indexOf(".com") + 5).replace("/", "_").toLowerCase();
         this.logDirectory = rb.getString("logsDirectory") + "/" + this.repoId + "/";
-        if (!new File(this.logDirectory).exists()) new File(this.logDirectory).mkdir();
+        if (!new File(this.logDirectory).exists()) new File(this.logDirectory).mkdirs();
 
         this.clonedRepoDirectory = rb.getString("reposDirectory") + "/" + this.repoId + "_" + this.commitSha + "/";
-        new File(this.clonedRepoDirectory).mkdir();
+        new File(this.clonedRepoDirectory).mkdirs();
 
 
     }

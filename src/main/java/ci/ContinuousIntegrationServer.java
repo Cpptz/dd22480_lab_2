@@ -8,7 +8,6 @@ import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
-
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.AbstractHandler;
@@ -19,19 +18,15 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.*;
 import java.io.UnsupportedEncodingException;
-import java.util.Scanner;
 import java.util.Base64;
-import java.util.regex.*;
 import java.util.ResourceBundle;
-import java.lang.*;
+import java.util.Scanner;
 
 /**
  * Skeleton of a ContinuousIntegrationServer which acts as webhook
  * See the Jetty documentation for API documentation of those classes.
  */
-
 public class ContinuousIntegrationServer extends AbstractHandler {
 
 
@@ -47,12 +42,15 @@ public class ContinuousIntegrationServer extends AbstractHandler {
 		// if target is file
 		if (target.substring(0,6).equals("/file/")) {
 			// making it a bit safter for the server
-			if (!target.substring(6).replaceAll("[a-zA-Z]", "").equals("")) {
+			if (!target.substring(6).replaceAll("[a-zA-Z_]", "").equals("")) {
 				response.getWriter().println("Not a valid url");
 			}
 			else {
 				// hard coded for now
-				File fileName = new File("./logs/" + target.substring(6) + ".txt");
+                ResourceBundle rb = ResourceBundle.getBundle("server");
+                String logDirectory = rb.getString("logsDirectory");
+                String filePath = target.substring(6).replaceFirst("_","/");
+				File fileName = new File(logDirectory + filePath + ".log");
 				Scanner scanner = new Scanner(fileName);
 				String content = scanner.useDelimiter("\\A").next();
 				scanner.close();
@@ -117,8 +115,9 @@ public class ContinuousIntegrationServer extends AbstractHandler {
 
         String ownerAndRepo = result.remoteUrl.substring(result.remoteUrl.indexOf(".com") + 5);
 
-        String username = "cpptz";
-        String token = "YmRiMmU0NjQxZGRjNmE0ZTI2OTU0OTAzZjEwYTQ5MzE1YzZmOTdiZg==";
+        ResourceBundle rb = ResourceBundle.getBundle("server");
+        String username = rb.getString("username");
+        String token = rb.getString("token");
 
         byte[] asBytes = Base64.getDecoder().decode(token);
         try {
