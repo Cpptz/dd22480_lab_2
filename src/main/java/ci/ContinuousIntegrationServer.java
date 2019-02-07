@@ -45,14 +45,14 @@ public class ContinuousIntegrationServer extends AbstractHandler {
         baseRequest.setHandled(true);
 
 		// if target is file
-		if (target.substring(0,7).equals("/file/:")) {
+		if (target.substring(0,6).equals("/file/")) {
 			// making it a bit safter for the server
-			if (!target.substring(7).replaceAll("[a-zA-Z]", "").equals("")) {
+			if (!target.substring(6).replaceAll("[a-zA-Z]", "").equals("")) {
 				response.getWriter().println("Not a valid url");
 			}
 			else {
 				// hard coded for now
-				File fileName = new File("./logs/" + target.substring(7) + ".txt");
+				File fileName = new File("./logs/" + target.substring(6) + ".txt");
 				Scanner scanner = new Scanner(fileName);
 				String content = scanner.useDelimiter("\\A").next();
 				scanner.close();
@@ -62,7 +62,7 @@ public class ContinuousIntegrationServer extends AbstractHandler {
 			}
 		}
 		// if the target is the payload from github
-		if (target.substring(0,9).equals("/payload/")) {
+		if (target.substring(0,9).equals("/webhook/")) {
 			String jsondata = (getRequestBody(request));
 			Parser p = new Parser();
 			Commit c = p.parseCommit(jsondata);
