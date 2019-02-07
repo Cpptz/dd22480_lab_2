@@ -89,20 +89,21 @@ public class Pipeline {
 
             int timeOut = 60;
             boolean isCompiling = compileRepo("mvn compile -B", timeOut);
-            boolean isTestPassing = testRepo("mvn test -B", timeOut);
-
-
-            if(isCompiling && isTestPassing){
-                result.status = PipelineResult.PipelineStatus.SUCCESS;
-            }
-            else{
+            if(!isCompiling){
                 result.status = PipelineResult.PipelineStatus.FAILURE;
-                if(!isCompiling){
-                    result.errorCause = PipelineResult.ErrorCause.COMPILATION;
-                }else{
+                result.errorCause = PipelineResult.ErrorCause.COMPILATION;
+            } else {
+                boolean isTestPassing = testRepo("mvn test -B", timeOut);
+                if(!isTestPassing){
+                    result.status = PipelineResult.PipelineStatus.FAILURE;
                     result.errorCause = PipelineResult.ErrorCause.TEST;
+                }else{
+                    result.status = PipelineResult.PipelineStatus.SUCCESS;
                 }
+
             }
+
+
 
 
         } catch (CloneException e) {
