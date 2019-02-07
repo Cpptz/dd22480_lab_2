@@ -11,6 +11,7 @@ import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -33,7 +34,7 @@ public class HistoryView {
                     "UTF-8");
 
             String toInsert = "";
-
+            Collections.reverse(pipelineResultList);
             for(PipelineResult pipelineResult: pipelineResultList){
                 String row = "<tr>";
                 row+="<td><a href=\""+pipelineResult.remoteUrl+"/commit/"+pipelineResult.commitSha+"\">"+pipelineResult.commitSha.substring(0,7)+"</a" +
