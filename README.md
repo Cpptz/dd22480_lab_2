@@ -1,14 +1,15 @@
 # dd22480_lab_2
 
-
 [![Build Status](https://travis-ci.org/Cpptz/dd22480_lab_2.svg?branch=master)](https://travis-ci.org/Cpptz/dd22480_lab_2)
 [![codecov](https://codecov.io/gh/Cpptz/dd22480_lab_2/branch/master/graph/badge.svg)]<(https://codecov.io/gh/Cpptz/dd22480_lab_2)
 
 
-One-sentenced description of application.
+An implementation of a small continous integration server.
 
 
 ## Description
+The CI server handles HTTP requests on events. 
+The CI server supports compiling a project, executing the automated tests of a project and notification of the CI results by setting the commit status on the repository on Github.
 
 
 ## Documentation
@@ -25,14 +26,13 @@ Our dependencies are handled with *Maven*, see [pom.xml](pom.xml).
 We have one main dependency: [Junit 5](https://junit.org/junit5/) 
 
 ### Specification
-All LIC functions are described in [decide.pdf](decide.pdf) in section 2.1. For example is LIC_4() described under point 4.
+
 
 ### Test
 We have written unit tests for methods of:
 * [ContinousIntegrationServer.java](src/main/java/main/ContinousIntegrationServer.java) in [ContinousIntegrationServerTest.java](src/test/java/main/ContinousIntegrationServerTest.java )
-
-and also end to end tests for the INSERT FUNCTION/CLASS of [ContinousIntegrationServer.java](src/main/java/main/ContinousIntegrationServer.java) 
-in [ContinousIntegrationServer.java](src/test/java/main/ContinousIntegrationServer.java) 
+* [Parser.java] (src/test/java/main/Parser.java) in [ParserTest.java] (src/test/java/main/ParserTest.java)
+* [Pipeline.java] (src/test/java/main/Pipeline.java) in [PipelineTest.java] (src/test/java/main/PipelineTest.java)
 
 ### How to Run It
 #### Terminal
