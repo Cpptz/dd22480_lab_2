@@ -16,16 +16,17 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Base64;
 import java.util.ResourceBundle;
+import java.util.Scanner;
 
 /**
  * Skeleton of a ContinuousIntegrationServer which acts as webhook
  * See the Jetty documentation for API documentation of those classes.
  */
-
 public class ContinuousIntegrationServer extends AbstractHandler {
 
 
@@ -38,16 +39,39 @@ public class ContinuousIntegrationServer extends AbstractHandler {
         response.setStatus(HttpServletResponse.SC_OK);
         baseRequest.setHandled(true);
 
-        System.out.println(target);
-
+		// if target is file
+		if (target.substring(0,6).equals("/file/")) {
+			// making it a bit safter for the server
+			if (!target.substring(6).replaceAll("[a-zA-Z_]", "").equals("")) {
+				response.getWriter().println("Not a valid url");
+			}
+			else {
+				// hard coded for now
+                ResourceBundle rb = ResourceBundle.getBundle("server");
+                String logDirectory = rb.getString("logsDirectory");
+                String filePath = target.substring(6).replaceFirst("_","/");
+				File fileName = new File(logDirectory + filePath + ".log");
+				Scanner scanner = new Scanner(fileName);
+				String content = scanner.useDelimiter("\\A").next();
+				scanner.close();
+				response.setHeader("Content-Disposition", "inline; filename=\"" + fileName + "\"");
+				response.setContentType("text/plain");
+				response.getWriter().println(content);
+			}
+		}
+		// if the target is the payload from github
+		if (target.substring(0,9).equals("/webhook/")) {
+			String jsondata = (getRequestBody(request));
+			Parser p = new Parser();
+			Commit c = p.parseCommit(jsondata);
+			response.getWriter().println("CI job done");
+		}
+		
         // here you do all the continuous integration tasks
         // for example
         // 1st clone your repository
         // 2nd compile the code
-        String jsondata = (getRequestBody(request));
-        Parser p = new Parser();
-        Commit c = p.parseCommit(jsondata);
-        response.getWriter().println("CI job done");
+
     }
 
     private String getRequestBody(final HttpServletRequest request) {
@@ -91,8 +115,9 @@ public class ContinuousIntegrationServer extends AbstractHandler {
 
         String ownerAndRepo = result.remoteUrl.substring(result.remoteUrl.indexOf(".com") + 5);
 
-        String username = "cpptz";
-        String token = "YmRiMmU0NjQxZGRjNmE0ZTI2OTU0OTAzZjEwYTQ5MzE1YzZmOTdiZg==";
+        ResourceBundle rb = ResourceBundle.getBundle("server");
+        String username = rb.getString("username");
+        String token = rb.getString("token");
 
         byte[] asBytes = Base64.getDecoder().decode(token);
         try {
