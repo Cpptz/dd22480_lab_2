@@ -31,10 +31,10 @@ We have many dependencies :
 
 ### Test
 We have written unit tests for methods of:
-* [ContinousIntegrationServer.java](/src/main/java/ci/ContinuousIntegrationServer.java) in [ContinousIntegrationServerTest.java](/src/test/java/ci/ContinuousIntegrationServerTest.java)
-* [Parser.java](src/main/java/ci/Parser.java) in [ParserTest.java](/src/test/java/ci/ParserTest.java)
-* [Pipeline.java](src/main/java/ci/Pipeline.java) in [PipelineTest.java](/src/test/java/ci/PipelineTest.java)
-* [SavePipelineResult.java](src/main/java/ci/SavePipelineResult.java) in [SavePipelineResultTest.java](src/main/java/ci/SavePipelineResultTest.java)
+* [ContinousIntegrationServer.java](./src/main/java/ci/ContinuousIntegrationServer.java) in [ContinousIntegrationServerTest.java](./src/test/java/ci/ContinuousIntegrationServerTest.java)
+* [Parser.java](./src/main/java/ci/Parser.java) in [ParserTest.java](./src/test/java/ci/ParserTest.java)
+* [Pipeline.java](./src/main/java/ci/Pipeline.java) in [PipelineTest.java](./src/test/java/ci/PipelineTest.java)
+* [SavePipelineResult.java](./src/main/java/ci/SavePipelineResult.java) in [SavePipelineResultTest.java](./src/main/java/ci/SavePipelineResultTest.java)
 
 ### How to Run It
 #### Terminal
