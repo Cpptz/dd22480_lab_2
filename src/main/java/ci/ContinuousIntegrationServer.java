@@ -77,7 +77,7 @@ public class ContinuousIntegrationServer extends AbstractHandler {
 
             });
 
-
+            System.out.println("Job done");
             response.getWriter().println("CI job done");
 
 		}
