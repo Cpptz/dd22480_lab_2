@@ -18,14 +18,14 @@
             background-color: #dddddd;
         }
 
-        td:nth-child(2)[value="failure"] {
+        td:nth-child(3)[value="failure"] {
             background-color: #FF0000;
         }
-        td:nth-child(2)[value="error"] {
+        td:nth-child(3)[value="error"] {
             background-color: #FF0000;
         }
 
-        td:nth-child(2)[value="success"] {
+        td:nth-child(3)[value="success"] {
             background-color: #4CAF50;
         }
 
@@ -39,10 +39,11 @@
 <table>
     <tr>
         <th>Commit Sha</th>
+        <th>Build time</th>
         <th>Status</th>
         <th>Compile log</th>
         <th>Test log</th>
-        <th>Error Cause</th>
+        <th>Cause of the failure</th>
     </tr>
     insert_code
 </table>

@@ -41,7 +41,7 @@ class SavePipelineResultTest {
     void saveResult() {
         //create a result object
         SavePipelineResult savePipeline = new SavePipelineResult(historyFile);
-        PipelineResult result = new PipelineResult("testsha", "testurl");
+        PipelineResult result = new PipelineResult("testsha", "testurl","2019-02-07 19:49:55\n");
 
         result.errorCause = PipelineResult.ErrorCause.CLONE;
         result.status = PipelineResult.PipelineStatus.ERROR;
@@ -52,7 +52,7 @@ class SavePipelineResultTest {
             BufferedReader reader = new BufferedReader(new FileReader(historyFile));
             String pipeLineObject = reader.readLine();
             // Should pass
-            assertEquals("ERROR,testurl,testsha,CLONE,false,false, , ", pipeLineObject);
+            assertEquals("ERROR,testurl,testsha,CLONE,false,false, , ,2019-02-07 19:49:55", pipeLineObject);
         }
         catch (IOException e) {
             Assertions.fail();
@@ -64,7 +64,7 @@ class SavePipelineResultTest {
     void retrieveAll() {
         // create a result object
         SavePipelineResult savePipeline = new SavePipelineResult(historyFile);
-        PipelineResult result = new PipelineResult("testsha", "testurl");
+        PipelineResult result = new PipelineResult("testsha", "testurl","2019-02-07 19:49:55");
 
         result.errorCause = PipelineResult.ErrorCause.CLONE;
         result.status = PipelineResult.PipelineStatus.ERROR;
@@ -86,6 +86,7 @@ class SavePipelineResultTest {
         assertEquals(" ", result.testLogPath);
         assertFalse(result.compileLog);
         assertFalse(result.testLog);
+        assertEquals("2019-02-07 19:49:55",result.time);
 
     }
 }

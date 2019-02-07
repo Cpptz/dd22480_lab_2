@@ -38,19 +38,53 @@ public class PipelineResult {
         NONE
 
     }
+
+    /**
+     * status of the pipeline
+     */
     public PipelineStatus status;
+    /**
+     * url of the remote repository
+     */
     public String remoteUrl;
+    /**
+     * sha of the commit
+     */
     public String commitSha;
 
+    /**
+     * cause of failing or error
+     */
     public ErrorCause errorCause = ErrorCause.NONE;
+
+    /**
+     * indicates if there is a log file for compilation
+     */
     public boolean compileLog;
+
+    /**
+     * indicates if there is a log file for testing
+     */
     public boolean testLog;
     public String compileLogPath = " ";
     public String testLogPath = " ";
+    /**
+     * time the build was triggered
+     */
+    public String time;
 
 
-    public PipelineResult(String commitSha, String remoteUrl) {
+    /**
+     *
+     * @param commitSha sha of the commit
+     * @param remoteUrl url of the remote repository
+     * @param time time the build was triggered
+     */
+    public PipelineResult(String commitSha, String remoteUrl, String time) {
         this.commitSha = commitSha;
         this.remoteUrl = remoteUrl;
+        this.time =time;
     }
+
+    public PipelineResult(){}
 }
