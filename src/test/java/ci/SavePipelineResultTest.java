@@ -52,7 +52,7 @@ class SavePipelineResultTest {
             BufferedReader reader = new BufferedReader(new FileReader(historyFile));
             String pipeLineObject = reader.readLine();
             // Should pass
-            assertEquals("ERROR,testurl,testsha,CLONE,false,false,null,null", pipeLineObject);
+            assertEquals("ERROR,testurl,testsha,CLONE,false,false, , ", pipeLineObject);
         }
         catch (IOException e) {
             Assertions.fail();
@@ -82,8 +82,8 @@ class SavePipelineResultTest {
         assertEquals("testurl", result.remoteUrl);
         assertEquals("testsha", result.commitSha);
         assertEquals(PipelineResult.ErrorCause.CLONE, result.errorCause);
-        assertEquals("null", result.compileLogPath);
-        assertEquals("null", result.testLogPath);
+        assertEquals(" ", result.compileLogPath);
+        assertEquals(" ", result.testLogPath);
         assertFalse(result.compileLog);
         assertFalse(result.testLog);
 
