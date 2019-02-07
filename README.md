@@ -4,12 +4,11 @@
 [![codecov](https://codecov.io/gh/Cpptz/dd22480_lab_2/branch/master/graph/badge.svg)]<(https://codecov.io/gh/Cpptz/dd22480_lab_2)
 
 
-An implementation of a small continous integration server.
+An implementation of a small continous integration (CI) server which supports compiling a project, executing the automated tests of a project and notification of the CI results by setting the commit status on the repository on Github.
 
 
 ## Description
-The CI server handles HTTP requests on events. 
-The CI server supports compiling a project, executing the automated tests of a project and notification of the CI results by setting the commit status on the repository on Github.
+The CI server handles HTTP requests on events. When there is a request the CI server sends the request to getRequestBody() to obtain the json data. The json data is parsed and saved as a commit. A pipeline is created holding a Git object, the repository URL and the unique commit ID. The pipeline clones the repository, does a checkout, compiles the repository and tests it. The pipeline result is notified by setting the commit status on the repository on Github.
 
 
 ## Documentation
@@ -24,9 +23,6 @@ Our dependencies are handled with *Maven*, see [pom.xml](pom.xml).
 
 
 We have one main dependency: [Junit 5](https://junit.org/junit5/) 
-
-### Specification
-
 
 ### Test
 We have written unit tests for methods of:
@@ -59,10 +55,13 @@ All of us agreed on a [guide](CONTRIBUTING.md) for contribution
 
 This is what we have achieved 
 * Cyril Pottiez
-
+** sendStatus()
+** sendStatusTest()
 
 * Sara Ersson
-	
+** sendStatus()
+** sendStatusTest()
+** README
 	
 * Viktor Widin
 
