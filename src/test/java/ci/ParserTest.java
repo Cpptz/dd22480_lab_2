@@ -15,7 +15,7 @@ class ParserTest {
         Parser p = new Parser();
 		Commit c = p.parseCommit(jsondata);
 		String sha = "ec35c54ffbda84a1392618d84bedd3a39d82401f";
-		String url = "https://github.com/Cpptz/dd22480_lab_2/";
+		String url = "https://github.com/Cpptz/dd22480_lab_2";
         String ref = "refs/heads/master";
 		String timestamp = "2019-02-05T18:06:09+01:00";
 		String name = "sork01";
