@@ -73,7 +73,7 @@ public class HistoryView {
 
     /**
      *
-     * @param path
+     * @param path path of the log file
      * @return path formatted for the server
      */
     public static String makePathForServer(String path){

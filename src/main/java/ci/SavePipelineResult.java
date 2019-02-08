@@ -17,6 +17,7 @@ public class SavePipelineResult {
 
     /**
      * Create a new file if it's not already created.
+     * @param filename path of the history file
      */
     public SavePipelineResult(String filename) {
         pipelineResult = new File(filename);
@@ -32,7 +33,7 @@ public class SavePipelineResult {
 
     /**
      * This method will save the result of the pipeline to a file. One pipelineresult per line.
-     * @param result
+     * @param result result to save
      */
     public void saveResult(PipelineResult result){
         try {
