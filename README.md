@@ -5,7 +5,7 @@
 
 
 One-sentenced description of application.
-Changing
+Last change
 
 ## Description
 
