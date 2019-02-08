@@ -128,7 +128,6 @@ public class ContinuousIntegrationServer extends AbstractHandler {
     /**
      * @param result The result from running the pipeline
      * @return The status has been sent if no exception
-     * @throws Exception Response status code is not 201
      */
     public static boolean sendStatus(PipelineResult result) {
         // convert to lower case to avoid 422 unprocessable entity error

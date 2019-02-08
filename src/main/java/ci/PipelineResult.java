@@ -31,10 +31,25 @@ public class PipelineResult {
      * Cause of the failure
      */
     public enum ErrorCause {
+        /**
+         * If clone has failed
+         */
         CLONE,
+        /**
+         * If checkout has failed
+         */
         CHECKOUT,
+        /**
+         * If compilation has failed
+         */
         COMPILATION,
+        /**
+         * If test has failed
+         */
         TEST,
+        /**
+         * If nothing has failed
+         */
         NONE
 
     }

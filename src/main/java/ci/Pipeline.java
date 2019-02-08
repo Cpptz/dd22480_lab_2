@@ -159,14 +159,14 @@ public class Pipeline {
 
 
     /**
-     * @return
+     * @return the directory of the cloned repo
      */
     public String getClonedRepoDirectory() {
         return clonedRepoDirectory;
     }
 
     /**
-     * @return
+     * @return directory of the log for this repository
      */
     public String getLogDirectory() {
         return logDirectory;
@@ -213,6 +213,7 @@ public class Pipeline {
      * @param compileCommand string of the command to compile (e.g "mvn compile")
      * @param waitForSecond  max number of seconds a process can execute
      * @return true if it compiles, false if not
+     * @throws CompileException when the subprocess has failed
      */
     public boolean compileRepo(String compileCommand, int waitForSecond) throws CompileException {
         String[] commandArray = compileCommand.split(" ");
@@ -229,6 +230,7 @@ public class Pipeline {
      * @param testCommand   string of the command to test
      * @param waitForSecond max number of seconds a process can execute
      * @return true if it passes tests, false if not
+     * @throws TestException when the subprocess has failed
      */
     public boolean testRepo(String testCommand, int waitForSecond) throws TestException {
         String[] commandArray = testCommand.split(" ");
