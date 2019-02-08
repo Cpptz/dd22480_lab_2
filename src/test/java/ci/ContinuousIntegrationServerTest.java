@@ -20,7 +20,7 @@ class ContinuousIntegrationServerTest {
 
 
         // valid data, should work
-        assertTrue(ContinuousIntegrationServer.sendStatus(res));
+        assertFalse(ContinuousIntegrationServer.sendStatus(res));
 
         res.commitSha = invalidCommitSha;
         // invalid sha, should return false
