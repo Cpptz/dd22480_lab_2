@@ -65,12 +65,11 @@ public class ContinuousIntegrationServer extends AbstractHandler {
         }
         // if the target is the payload from github
         else if (target.substring(0, 8).equals("/webhook")) {
-
+	    String jsondata = (getRequestBody(request));
             // this runs in a different thread
             ExecutorService executor = Executors.newSingleThreadExecutor();
             executor.submit(() -> {
                 // cal pipeline and sendstatus ...
-                String jsondata = (getRequestBody(request));
                 Parser p = new Parser();
                 Commit c = p.parseCommit(jsondata);
                 Pipeline pipeline = new Pipeline(c.url, c.sha);
