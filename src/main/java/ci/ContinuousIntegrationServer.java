@@ -179,7 +179,7 @@ public class ContinuousIntegrationServer extends AbstractHandler {
             jsonObject.addProperty("state", status);
             jsonObject.addProperty("description", description);
             jsonObject.addProperty("context", "ci/dd2480");
-            jsonObject.addProperty("target-url", "http://"+ResourceBundle.getBundle("server").getString("ip")+":"
+            jsonObject.addProperty("target_url", "http://"+ResourceBundle.getBundle("server").getString("ip")+":"
             +ResourceBundle.getBundle("server").getString("port")+"/history");
             StringEntity params = new StringEntity(jsonObject.toString());
             request.setEntity(params);
