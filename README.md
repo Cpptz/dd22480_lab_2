@@ -9,7 +9,13 @@ An implementation of a small continous integration (CI) server which supports co
 
 
 ## Description
-The CI server handles HTTP requests on events. When there is a request the CI server sends the request to getRequestBody() to obtain the json data. The json data is parsed and saved as a commit. A pipeline is created holding a Git object, the repository URL and the unique commit ID. The pipeline clones the repository, does a checkout, compiles the repository and tests it. The pipeline result is notified by setting the commit status on the repository on Github.
+The CI server handles HTTP requests on Github push events. When there is a request, the CI server parses the request to extract to the url of the repository and the sha of the commit and then it runs a pipeline. The pipeline clones the repository, does a checkout, compiles the repository and tests it with *Maven* command. The pipeline result is notified by setting the commit status on the repository on Github.
+
+In total, we have three endpoints:
+* /webhook : handle events of github and triggers the pipeline
+* /history : displays an html formatted view of the history of the build
+* /file/:file_name : displays the file_name (used to display logs)
+
 
 
 ## Documentation
@@ -45,7 +51,7 @@ sudo apt install maven
 ```
 Then at the root folder, you can launch all tests by running
 ```bash
-mvn test -B
+mvn test
 ```
 Can can also lauch the server using the following command:
 ```bash
@@ -76,11 +82,13 @@ This is what we have achieved
 	* /webhook endpoint
 
 * Robin Gunning
-    	* Parsing of the github payload
+	* Parsing of the github payload
 	* /file endpoint
 	* Hosting server
     
 * Fredrik Norrman
+	* SavePipelineResult object
+	* javadoc
 
 * Cyril Pottiez
 	* runPipeline()
