@@ -88,6 +88,7 @@ This is what we have achieved
     
 * Fredrik Norrman
 	* SavePipelineResult object
+	* SavePipelineResult test
 	* javadoc
 
 * Cyril Pottiez
