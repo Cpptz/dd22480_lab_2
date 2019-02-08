@@ -49,7 +49,7 @@ mvn test -B
 ```
 Can can also lauch the server using the following command:
 ```bash
-mvn exec:java -Dexec.mainClass="ci.ContinuousIntegrationServer"
+mvn compile exec:java -Dexec.mainClass="ci.ContinuousIntegrationServer"
 ```
 
 #### IDE
