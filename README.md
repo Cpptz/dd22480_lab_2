@@ -9,7 +9,7 @@ An implementation of a small continous integration (CI) server which supports co
 
 
 ## Description
-The CI server handles HTTP requests on Github push events. When there is a request, the CI server parses the request to extract to the url of the repository and the sha of the commit and then it runs a pipeline. The pipeline clones the repository, does a checkout, compiles the repository and tests it with *Maven* command. The pipeline result is notified by setting the commit status on the repository on Github.
+The CI server handles HTTP requests on Github push events. When there is a request, the CI server parses the request to extract to the url of the repository and the sha of the commit and then it runs a pipeline. The pipeline clones the repository, does a checkout, compiles the repository and tests it with *Maven* command. The pipeline result is notified by setting the commit status on the repository on Github and also written in a file to retrieve it later in a view of the history of the builds.
 
 In total, we have three endpoints:
 * /webhook : handle events of github and triggers the pipeline
